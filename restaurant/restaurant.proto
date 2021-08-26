@@ -1,0 +1,14 @@
+syntax = "proto3";
+option go_package = "pb/restaurant";
+package pb;
+
+service RestaurantService {
+
+}
+
+message Restaurant {
+    string id = 1;
+    string name = 2;
+    string desciption = 3;
+    string location = 4;
+}

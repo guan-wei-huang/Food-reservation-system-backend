@@ -1,0 +1,13 @@
+syntax = "proto3";
+option go_package = "pb/order";
+package pb;
+
+service OrderService {
+
+}
+
+message order {
+    string id = 1;
+    string rid = 2;     // restaurant id
+    string uid = 3;     // user id
+}

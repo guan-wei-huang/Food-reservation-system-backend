@@ -13,3 +13,5 @@ go.mod && go.sum 的部分可以在 dockerfile 中做複製
 (COPY ...)
 
 ---
+compile .proto  file
+`protoc --go_out=plugins=grpc:. *.proto`

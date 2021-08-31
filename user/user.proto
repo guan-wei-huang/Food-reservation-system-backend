@@ -3,20 +3,43 @@ option go_package = "pb/user";
 package pb;
 
 service UserService {
-    rpc GetUser (GetUserRequest) returns (GetUserResponse);
+    rpc NewUser (NewUserRequest) returns (NewUserResponse);
+    rpc UserLogin (LoginRequest) returns (LoginResponse);
 }
 
-message User {
-    int32 id = 1;
-    string name = 2;
-    string password = 3;
-}
+// message User {
+//     int32 id = 1;
+//     string name = 2;
+//     string password = 3;
+// }
 
-message GetUserRequest {
+// message GetUserRequest {
+//     string name = 1;
+//     string password = 2;
+// }
+
+// message GetUserResponse {
+//     User user = 1;
+// }
+
+message NewUserRequest {
     string name = 1;
     string password = 2;
 }
 
-message GetUserResponse {
-    User user = 1;
+message NewUserResponse {
+    int32 id = 1;
+    string err = 2;
+}
+
+message LoginRequest {
+    string name = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string token = 1;
+    string refresh_token = 2;
+    string err = 3;
+
 }

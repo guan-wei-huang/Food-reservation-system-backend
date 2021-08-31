@@ -4,7 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
+	"time"
 
+	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -17,7 +20,7 @@ type User struct {
 
 type Service interface {
 	UserRegister(ctx context.Context, name, password string) (*User, error)
-	UserLogin(ctx context.Context, name, password string) (*User, error)
+	UserLogin(ctx context.Context, name, password string) (string, string, error)
 }
 
 type userService struct {
@@ -48,20 +51,25 @@ func (s *userService) UserRegister(ctx context.Context, name, password string) (
 	return user, nil
 }
 
-func (s *userService) UserLogin(ctx context.Context, name, password string) (*User, error) {
+func (s *userService) UserLogin(ctx context.Context, name, password string) (string, string, error) {
 	user, err := s.repo.GetUser(ctx, name)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, NewUserError("account doesn't exist")
-		} else {
-			return nil, fmt.Errorf("fetch user:%v failed", name)
+			return "", "", NewUserError("account doesn't exist")
 		}
+		return "", "", fmt.Errorf("fetch user:%v failed", name)
 	}
 
 	if ok := comparePassword(password, user.Password); !ok {
-		return nil, NewUserError("password is wrong")
+		return "", "", NewUserError("password is wrong")
 	}
-	return user, nil
+
+	var token, refreshToken string
+	if token, err = generateToken(user); err != nil {
+		return "", "", fmt.Errorf("jwt parse failed: %v", err)
+	}
+
+	return token, refreshToken, nil
 }
 
 func hashPassword(password string) (string, error) {
@@ -75,4 +83,18 @@ func hashPassword(password string) (string, error) {
 func comparePassword(p1, p2 string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(p1), []byte(p2))
 	return err == nil
+}
+
+func generateToken(u *User) (string, error) {
+	claim := &jwt.StandardClaims{
+		Subject:   strconv.FormatInt(int64(u.ID), 10),
+		ExpiresAt: time.Now().Add(time.Hour).Unix(),
+	}
+
+	token, err := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), claim).SignedString("secret")
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }

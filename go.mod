@@ -8,4 +8,5 @@ require (
     "google.golang.org/grpc" v1.31.0
     "google.golang.org/protobuf" v1.27.1
     "golang.org/x/crypto" v0.0.0-20210421170649-83a5a9bb288b
+    "github.com/golang-jwt/jwt" v3.2.2+incompatible
 )

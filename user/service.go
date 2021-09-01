@@ -86,9 +86,10 @@ func comparePassword(p1, p2 string) bool {
 }
 
 func generateToken(u *User) (string, error) {
-	claim := &jwt.StandardClaims{
-		Subject:   strconv.FormatInt(int64(u.ID), 10),
-		ExpiresAt: time.Now().Add(time.Hour).Unix(),
+	claim := &jwt.MapClaims{
+		"exp":      time.Now().Add(time.Minute * 15).Unix(),
+		"userId":   strconv.Itoa(u.ID),
+		"userName": u.Name,
 	}
 
 	token, err := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), claim).SignedString("secret")

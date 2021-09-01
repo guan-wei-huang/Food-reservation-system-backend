@@ -20,3 +20,8 @@ compile .proto  file
 proto style:
 1. Use camel as func name (ex. NewUser())
 2. Use _ as field name (ex. string favorite_song)
+
+---
+# client.go
+wrap up && unwrap up request and response
+client.go 得到的 err 都是來自於伺服器的錯誤，client 的錯都會包在..

@@ -8,7 +8,7 @@ type Restaurant struct {
 	ID          int
 	Name        string
 	Description string
-	location    string
+	Location    string
 }
 
 type Menu struct {

@@ -5,6 +5,7 @@ package pb;
 service RestaurantService {
     rpc GetRestaurantMenu (MenuRequest) returns (MenuResponse);
     rpc CreateFood (CreateFoodRequest) returns (GeneralResponse);
+    rpc CreateRestaurant (CreateRestReq) returns (GeneralResponse);
 }
 
 message Restaurant {
@@ -38,9 +39,14 @@ message MenuRequest {
 
 message MenuResponse {
     Menu menu = 1;
+    string error = 2;
 }
 
 message CreateFoodRequest {
     int32 rid = 1;
     Food food = 2;
+}
+
+message CreateRestReq {
+    Restaurant rest = 1;
 }

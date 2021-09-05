@@ -43,8 +43,7 @@ message MenuResponse {
 }
 
 message CreateFoodRequest {
-    int32 rid = 1;
-    Food food = 2;
+    Food food = 1;
 }
 
 message CreateRestReq {

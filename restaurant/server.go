@@ -85,3 +85,37 @@ func (s *grpcServer) CreateRestaurant(ctx context.Context, r *pb.CreateRestReq) 
 	}
 	return &pb.GeneralResponse{Complete: true}, nil
 }
+
+func (s *grpcServer) SearchRestaurant(ctx context.Context, r *pb.SearchRestaurantReq) (*pb.SearchRestaurantResp, error) {
+	rests, err := s.service.SearchRestaurant(ctx, r.Location)
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	restaurants := []*pb.Restaurant{}
+	for _, r := range rests {
+		restaurants = append(restaurants, formatRestaurant(r))
+	}
+	return &pb.SearchRestaurantResp{Restaurants: restaurants}, nil
+}
+
+func formatRestaurant(rest *Restaurant) *pb.Restaurant {
+	r := &pb.Restaurant{
+		Id:          int32(rest.ID),
+		Name:        rest.Name,
+		Description: rest.Description,
+		Location:    rest.Location,
+	}
+	return r
+}
+
+func parseRestaurant(pbr *pb.Restaurant) *Restaurant {
+	r := &Restaurant{
+		ID:          int(pbr.Id),
+		Name:        pbr.Name,
+		Description: pbr.Description,
+		Location:    pbr.Location,
+	}
+	return r
+}

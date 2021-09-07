@@ -9,6 +9,17 @@ import (
 )
 
 type Service interface {
+	NewUser(context.Context, string, string) (int, error)
+	UserLogin(context.Context, string, string) (string, string, error)
+
+	GetRestaurantMenu(context.Context, int) (*restaurant.Menu, error)
+	CreateFood(context.Context, *restaurant.Food) error
+	CreateRestaurant(context.Context, *restaurant.Restaurant) error
+	SearchRestaurant(context.Context, string) ([]*restaurant.Restaurant, error)
+
+	CreateOrder(context.Context, *order.Order) (int, error)
+	GetOrder(context.Context, int) (*order.Order, error)
+	GetOrderForUser(context.Context, int) ([]*order.Order, error)
 }
 
 type apiGatewayService struct {
@@ -73,14 +84,7 @@ func (s *apiGatewayService) GetRestaurantMenu(ctx context.Context, rid int) (*re
 	return m, nil
 }
 
-func (s *apiGatewayService) CreateFood(ctx context.Context, rid int, name, description string, price float32) error {
-	f := &restaurant.Food{
-		Rid:         rid,
-		Name:        name,
-		Description: description,
-		Price:       price,
-	}
-
+func (s *apiGatewayService) CreateFood(ctx context.Context, f *restaurant.Food) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*3)
 	defer cancel()
 
@@ -90,13 +94,7 @@ func (s *apiGatewayService) CreateFood(ctx context.Context, rid int, name, descr
 	return nil
 }
 
-func (s *apiGatewayService) CreateRestaurant(ctx context.Context, name, description, location string) error {
-	r := &restaurant.Restaurant{
-		Name:        name,
-		Description: description,
-		Location:    location,
-	}
-
+func (s *apiGatewayService) CreateRestaurant(ctx context.Context, r *restaurant.Restaurant) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*3)
 	defer cancel()
 
@@ -104,6 +102,17 @@ func (s *apiGatewayService) CreateRestaurant(ctx context.Context, name, descript
 		return err
 	}
 	return nil
+}
+
+func (s *apiGatewayService) SearchRestaurant(ctx context.Context, location string) ([]*restaurant.Restaurant, error) {
+	ctx, cancel := context.WithTimeout(ctx, time.Second*3)
+	defer cancel()
+
+	rests, err := s.restaurantClient.SearchRestaurant(ctx, location)
+	if err != nil {
+		return nil, err
+	}
+	return rests, nil
 }
 
 func (s *apiGatewayService) CreateOrder(ctx context.Context, order *order.Order) (int, error) {

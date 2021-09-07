@@ -6,6 +6,7 @@ service RestaurantService {
     rpc GetRestaurantMenu (MenuRequest) returns (MenuResponse);
     rpc CreateFood (CreateFoodRequest) returns (GeneralResponse);
     rpc CreateRestaurant (CreateRestReq) returns (GeneralResponse);
+    rpc SearchRestaurant (SearchRestaurantReq) returns (SearchRestaurantResp);
 }
 
 message Restaurant {
@@ -48,4 +49,13 @@ message CreateFoodRequest {
 
 message CreateRestReq {
     Restaurant rest = 1;
+}
+
+message SearchRestaurantReq {
+    string location = 1;
+}
+
+message SearchRestaurantResp {
+    repeated Restaurant restaurants = 1;
+    string error = 2;
 }

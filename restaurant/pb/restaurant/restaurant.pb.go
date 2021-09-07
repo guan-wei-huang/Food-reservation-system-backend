@@ -480,6 +480,108 @@ func (x *CreateRestReq) GetRest() *Restaurant {
 	return nil
 }
 
+type SearchRestaurantReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Location string `protobuf:"bytes,1,opt,name=location,proto3" json:"location,omitempty"`
+}
+
+func (x *SearchRestaurantReq) Reset() {
+	*x = SearchRestaurantReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_restaurant_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SearchRestaurantReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchRestaurantReq) ProtoMessage() {}
+
+func (x *SearchRestaurantReq) ProtoReflect() protoreflect.Message {
+	mi := &file_restaurant_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchRestaurantReq.ProtoReflect.Descriptor instead.
+func (*SearchRestaurantReq) Descriptor() ([]byte, []int) {
+	return file_restaurant_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *SearchRestaurantReq) GetLocation() string {
+	if x != nil {
+		return x.Location
+	}
+	return ""
+}
+
+type SearchRestaurantResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Restaurants []*Restaurant `protobuf:"bytes,1,rep,name=restaurants,proto3" json:"restaurants,omitempty"`
+	Error       string        `protobuf:"bytes,2,opt,name=error,proto3" json:"error,omitempty"`
+}
+
+func (x *SearchRestaurantResp) Reset() {
+	*x = SearchRestaurantResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_restaurant_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SearchRestaurantResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchRestaurantResp) ProtoMessage() {}
+
+func (x *SearchRestaurantResp) ProtoReflect() protoreflect.Message {
+	mi := &file_restaurant_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchRestaurantResp.ProtoReflect.Descriptor instead.
+func (*SearchRestaurantResp) Descriptor() ([]byte, []int) {
+	return file_restaurant_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *SearchRestaurantResp) GetRestaurants() []*Restaurant {
+	if x != nil {
+		return x.Restaurants
+	}
+	return nil
+}
+
+func (x *SearchRestaurantResp) GetError() string {
+	if x != nil {
+		return x.Error
+	}
+	return ""
+}
+
 var File_restaurant_proto protoreflect.FileDescriptor
 
 var file_restaurant_proto_rawDesc = []byte{
@@ -520,20 +622,34 @@ var file_restaurant_proto_rawDesc = []byte{
 	0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x74, 0x52, 0x65, 0x71, 0x12, 0x22, 0x0a, 0x04,
 	0x72, 0x65, 0x73, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x70, 0x62, 0x2e,
 	0x52, 0x65, 0x73, 0x74, 0x61, 0x75, 0x72, 0x61, 0x6e, 0x74, 0x52, 0x04, 0x72, 0x65, 0x73, 0x74,
-	0x32, 0xc1, 0x01, 0x0a, 0x11, 0x52, 0x65, 0x73, 0x74, 0x61, 0x75, 0x72, 0x61, 0x6e, 0x74, 0x53,
-	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x36, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x52, 0x65, 0x73,
-	0x74, 0x61, 0x75, 0x72, 0x61, 0x6e, 0x74, 0x4d, 0x65, 0x6e, 0x75, 0x12, 0x0f, 0x2e, 0x70, 0x62,
-	0x2e, 0x4d, 0x65, 0x6e, 0x75, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x10, 0x2e, 0x70,
-	0x62, 0x2e, 0x4d, 0x65, 0x6e, 0x75, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x38,
-	0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x46, 0x6f, 0x6f, 0x64, 0x12, 0x15, 0x2e, 0x70,
-	0x62, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x46, 0x6f, 0x6f, 0x64, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x6e, 0x65, 0x72, 0x61, 0x6c,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3a, 0x0a, 0x10, 0x43, 0x72, 0x65, 0x61,
-	0x74, 0x65, 0x52, 0x65, 0x73, 0x74, 0x61, 0x75, 0x72, 0x61, 0x6e, 0x74, 0x12, 0x11, 0x2e, 0x70,
-	0x62, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x74, 0x52, 0x65, 0x71, 0x1a,
-	0x13, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x6e, 0x65, 0x72, 0x61, 0x6c, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x42, 0x0f, 0x5a, 0x0d, 0x70, 0x62, 0x2f, 0x72, 0x65, 0x73, 0x74, 0x61,
-	0x75, 0x72, 0x61, 0x6e, 0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x22, 0x31, 0x0a, 0x13, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x52, 0x65, 0x73, 0x74, 0x61, 0x75,
+	0x72, 0x61, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x12, 0x1a, 0x0a, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6c, 0x6f, 0x63, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x22, 0x5e, 0x0a, 0x14, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x52, 0x65, 0x73,
+	0x74, 0x61, 0x75, 0x72, 0x61, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x12, 0x30, 0x0a, 0x0b, 0x72,
+	0x65, 0x73, 0x74, 0x61, 0x75, 0x72, 0x61, 0x6e, 0x74, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b,
+	0x32, 0x0e, 0x2e, 0x70, 0x62, 0x2e, 0x52, 0x65, 0x73, 0x74, 0x61, 0x75, 0x72, 0x61, 0x6e, 0x74,
+	0x52, 0x0b, 0x72, 0x65, 0x73, 0x74, 0x61, 0x75, 0x72, 0x61, 0x6e, 0x74, 0x73, 0x12, 0x14, 0x0a,
+	0x05, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x72,
+	0x72, 0x6f, 0x72, 0x32, 0x88, 0x02, 0x0a, 0x11, 0x52, 0x65, 0x73, 0x74, 0x61, 0x75, 0x72, 0x61,
+	0x6e, 0x74, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x36, 0x0a, 0x11, 0x47, 0x65, 0x74,
+	0x52, 0x65, 0x73, 0x74, 0x61, 0x75, 0x72, 0x61, 0x6e, 0x74, 0x4d, 0x65, 0x6e, 0x75, 0x12, 0x0f,
+	0x2e, 0x70, 0x62, 0x2e, 0x4d, 0x65, 0x6e, 0x75, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
+	0x10, 0x2e, 0x70, 0x62, 0x2e, 0x4d, 0x65, 0x6e, 0x75, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x38, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x46, 0x6f, 0x6f, 0x64, 0x12,
+	0x15, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x46, 0x6f, 0x6f, 0x64, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x6e, 0x65,
+	0x72, 0x61, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x3a, 0x0a, 0x10, 0x43,
+	0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x74, 0x61, 0x75, 0x72, 0x61, 0x6e, 0x74, 0x12,
+	0x11, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x65, 0x73, 0x74, 0x52,
+	0x65, 0x71, 0x1a, 0x13, 0x2e, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x6e, 0x65, 0x72, 0x61, 0x6c, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x45, 0x0a, 0x10, 0x53, 0x65, 0x61, 0x72, 0x63,
+	0x68, 0x52, 0x65, 0x73, 0x74, 0x61, 0x75, 0x72, 0x61, 0x6e, 0x74, 0x12, 0x17, 0x2e, 0x70, 0x62,
+	0x2e, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x52, 0x65, 0x73, 0x74, 0x61, 0x75, 0x72, 0x61, 0x6e,
+	0x74, 0x52, 0x65, 0x71, 0x1a, 0x18, 0x2e, 0x70, 0x62, 0x2e, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68,
+	0x52, 0x65, 0x73, 0x74, 0x61, 0x75, 0x72, 0x61, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x42, 0x0f,
+	0x5a, 0x0d, 0x70, 0x62, 0x2f, 0x72, 0x65, 0x73, 0x74, 0x61, 0x75, 0x72, 0x61, 0x6e, 0x74, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -548,33 +664,38 @@ func file_restaurant_proto_rawDescGZIP() []byte {
 	return file_restaurant_proto_rawDescData
 }
 
-var file_restaurant_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_restaurant_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_restaurant_proto_goTypes = []interface{}{
-	(*Restaurant)(nil),        // 0: pb.Restaurant
-	(*Menu)(nil),              // 1: pb.Menu
-	(*Food)(nil),              // 2: pb.Food
-	(*GeneralResponse)(nil),   // 3: pb.GeneralResponse
-	(*MenuRequest)(nil),       // 4: pb.MenuRequest
-	(*MenuResponse)(nil),      // 5: pb.MenuResponse
-	(*CreateFoodRequest)(nil), // 6: pb.CreateFoodRequest
-	(*CreateRestReq)(nil),     // 7: pb.CreateRestReq
+	(*Restaurant)(nil),           // 0: pb.Restaurant
+	(*Menu)(nil),                 // 1: pb.Menu
+	(*Food)(nil),                 // 2: pb.Food
+	(*GeneralResponse)(nil),      // 3: pb.GeneralResponse
+	(*MenuRequest)(nil),          // 4: pb.MenuRequest
+	(*MenuResponse)(nil),         // 5: pb.MenuResponse
+	(*CreateFoodRequest)(nil),    // 6: pb.CreateFoodRequest
+	(*CreateRestReq)(nil),        // 7: pb.CreateRestReq
+	(*SearchRestaurantReq)(nil),  // 8: pb.SearchRestaurantReq
+	(*SearchRestaurantResp)(nil), // 9: pb.SearchRestaurantResp
 }
 var file_restaurant_proto_depIdxs = []int32{
 	2, // 0: pb.Menu.food:type_name -> pb.Food
 	1, // 1: pb.MenuResponse.menu:type_name -> pb.Menu
 	2, // 2: pb.CreateFoodRequest.food:type_name -> pb.Food
 	0, // 3: pb.CreateRestReq.rest:type_name -> pb.Restaurant
-	4, // 4: pb.RestaurantService.GetRestaurantMenu:input_type -> pb.MenuRequest
-	6, // 5: pb.RestaurantService.CreateFood:input_type -> pb.CreateFoodRequest
-	7, // 6: pb.RestaurantService.CreateRestaurant:input_type -> pb.CreateRestReq
-	5, // 7: pb.RestaurantService.GetRestaurantMenu:output_type -> pb.MenuResponse
-	3, // 8: pb.RestaurantService.CreateFood:output_type -> pb.GeneralResponse
-	3, // 9: pb.RestaurantService.CreateRestaurant:output_type -> pb.GeneralResponse
-	7, // [7:10] is the sub-list for method output_type
-	4, // [4:7] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	0, // 4: pb.SearchRestaurantResp.restaurants:type_name -> pb.Restaurant
+	4, // 5: pb.RestaurantService.GetRestaurantMenu:input_type -> pb.MenuRequest
+	6, // 6: pb.RestaurantService.CreateFood:input_type -> pb.CreateFoodRequest
+	7, // 7: pb.RestaurantService.CreateRestaurant:input_type -> pb.CreateRestReq
+	8, // 8: pb.RestaurantService.SearchRestaurant:input_type -> pb.SearchRestaurantReq
+	5, // 9: pb.RestaurantService.GetRestaurantMenu:output_type -> pb.MenuResponse
+	3, // 10: pb.RestaurantService.CreateFood:output_type -> pb.GeneralResponse
+	3, // 11: pb.RestaurantService.CreateRestaurant:output_type -> pb.GeneralResponse
+	9, // 12: pb.RestaurantService.SearchRestaurant:output_type -> pb.SearchRestaurantResp
+	9, // [9:13] is the sub-list for method output_type
+	5, // [5:9] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_restaurant_proto_init() }
@@ -679,6 +800,30 @@ func file_restaurant_proto_init() {
 				return nil
 			}
 		}
+		file_restaurant_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SearchRestaurantReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_restaurant_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SearchRestaurantResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -686,7 +831,7 @@ func file_restaurant_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_restaurant_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
@@ -715,6 +860,7 @@ type RestaurantServiceClient interface {
 	GetRestaurantMenu(ctx context.Context, in *MenuRequest, opts ...grpc.CallOption) (*MenuResponse, error)
 	CreateFood(ctx context.Context, in *CreateFoodRequest, opts ...grpc.CallOption) (*GeneralResponse, error)
 	CreateRestaurant(ctx context.Context, in *CreateRestReq, opts ...grpc.CallOption) (*GeneralResponse, error)
+	SearchRestaurant(ctx context.Context, in *SearchRestaurantReq, opts ...grpc.CallOption) (*SearchRestaurantResp, error)
 }
 
 type restaurantServiceClient struct {
@@ -752,11 +898,21 @@ func (c *restaurantServiceClient) CreateRestaurant(ctx context.Context, in *Crea
 	return out, nil
 }
 
+func (c *restaurantServiceClient) SearchRestaurant(ctx context.Context, in *SearchRestaurantReq, opts ...grpc.CallOption) (*SearchRestaurantResp, error) {
+	out := new(SearchRestaurantResp)
+	err := c.cc.Invoke(ctx, "/pb.RestaurantService/SearchRestaurant", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RestaurantServiceServer is the server API for RestaurantService service.
 type RestaurantServiceServer interface {
 	GetRestaurantMenu(context.Context, *MenuRequest) (*MenuResponse, error)
 	CreateFood(context.Context, *CreateFoodRequest) (*GeneralResponse, error)
 	CreateRestaurant(context.Context, *CreateRestReq) (*GeneralResponse, error)
+	SearchRestaurant(context.Context, *SearchRestaurantReq) (*SearchRestaurantResp, error)
 }
 
 // UnimplementedRestaurantServiceServer can be embedded to have forward compatible implementations.
@@ -771,6 +927,9 @@ func (*UnimplementedRestaurantServiceServer) CreateFood(context.Context, *Create
 }
 func (*UnimplementedRestaurantServiceServer) CreateRestaurant(context.Context, *CreateRestReq) (*GeneralResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRestaurant not implemented")
+}
+func (*UnimplementedRestaurantServiceServer) SearchRestaurant(context.Context, *SearchRestaurantReq) (*SearchRestaurantResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchRestaurant not implemented")
 }
 
 func RegisterRestaurantServiceServer(s *grpc.Server, srv RestaurantServiceServer) {
@@ -831,6 +990,24 @@ func _RestaurantService_CreateRestaurant_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RestaurantService_SearchRestaurant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchRestaurantReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RestaurantServiceServer).SearchRestaurant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.RestaurantService/SearchRestaurant",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RestaurantServiceServer).SearchRestaurant(ctx, req.(*SearchRestaurantReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _RestaurantService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.RestaurantService",
 	HandlerType: (*RestaurantServiceServer)(nil),
@@ -846,6 +1023,10 @@ var _RestaurantService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateRestaurant",
 			Handler:    _RestaurantService_CreateRestaurant_Handler,
+		},
+		{
+			MethodName: "SearchRestaurant",
+			Handler:    _RestaurantService_SearchRestaurant_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

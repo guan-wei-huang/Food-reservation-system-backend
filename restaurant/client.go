@@ -96,3 +96,20 @@ func (c *Client) CreateRestaurant(ctx context.Context, r *Restaurant) error {
 	}
 	return nil
 }
+
+func (c *Client) SearchRestaurant(ctx context.Context, location string) ([]*Restaurant, error) {
+	r, err := c.service.SearchRestaurant(ctx, &pb.SearchRestaurantReq{Location: location})
+	if err != nil {
+		return nil, ErrInternalServer
+	}
+
+	if r.Error != "" {
+		return nil, errors.New(r.Error)
+	}
+
+	restaurants := []*Restaurant{}
+	for _, rest := range r.Restaurants {
+		restaurants = append(restaurants, parseRestaurant(rest))
+	}
+	return restaurants, nil
+}

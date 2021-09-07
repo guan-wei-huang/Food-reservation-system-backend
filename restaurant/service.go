@@ -5,29 +5,30 @@ import (
 )
 
 type Restaurant struct {
-	ID          int
-	Name        string
-	Description string
-	Location    string
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Location    string `json:"location"`
 }
 
 type Menu struct {
-	Rid   int
+	Rid   int `json:"rid"`
 	Foods []Food
 }
 
 type Food struct {
-	Fid         int
-	Rid         int
-	Name        string
-	Description string
-	Price       float32
+	Fid         int     `json:"fid"`
+	Rid         int     `json:"rid"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float32 `json:"price"`
 }
 
 type Service interface {
 	CreateRestaurant(ctx context.Context, r *Restaurant) error
 	CreateFood(ctx context.Context, f *Food) error
 	GetRestaurantMenu(ctx context.Context, rid int) (*Menu, error)
+	SearchRestaurant(ctx context.Context, location string) ([]*Restaurant, error)
 }
 
 type restaurantService struct {
@@ -58,4 +59,8 @@ func (s *restaurantService) CreateFood(ctx context.Context, f *Food) error {
 		return err
 	}
 	return nil
+}
+
+func (s *restaurantService) SearchRestaurant(ctx context.Context, location string) ([]*Restaurant, error) {
+
 }

@@ -11,4 +11,5 @@ require (
     "github.com/golang-jwt/jwt" v3.2.2+incompatible
     "github.com/gin-gonic/gin" v1.7.2
     "github.com/joho/godotenv" v1.3.0
+    "github.com/twpayne/go-geom" v1.4.1
 )

@@ -11,6 +11,10 @@ import (
 	"google.golang.org/grpc"
 )
 
+var (
+	GOOGLE_API_KEY string
+)
+
 type grpcServer struct {
 	service Service
 }

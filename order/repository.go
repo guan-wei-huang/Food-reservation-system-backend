@@ -11,6 +11,7 @@ var (
 )
 
 type Repository interface {
+	Close()
 	CreateOrder(ctx context.Context, order *Order) (int, error)
 	GetOrder(ctx context.Context, id int) (*Order, error)
 	GetOrderForUser(ctx context.Context, id int) (*[]Order, error)

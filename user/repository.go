@@ -8,6 +8,7 @@ import (
 )
 
 type Repository interface {
+	Close()
 	GetUser(ctx context.Context, name string) (*User, error)
 	CreateUser(ctx context.Context, name, password string) (*User, error)
 }
@@ -23,6 +24,10 @@ func NewUserRepository(dsn string) (Repository, error) {
 	}
 
 	return &repository{db}, nil
+}
+
+func (r *repository) Close() {
+	r.db.Close()
 }
 
 func (r *repository) GetUser(ctx context.Context, name string) (*User, error) {

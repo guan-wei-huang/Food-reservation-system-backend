@@ -83,11 +83,12 @@ func (s *grpcServer) CreateRestaurant(ctx context.Context, r *pb.CreateRestReq) 
 		Location:    r.Rest.Location,
 	}
 
-	if err := s.service.CreateRestaurant(ctx, rest); err != nil {
+	rid, err := s.service.CreateRestaurant(ctx, rest)
+	if err != nil {
 		log.Fatal(err)
 		return nil, err
 	}
-	return &pb.GeneralResponse{Complete: true}, nil
+	return &pb.GeneralResponse{Complete: true, Id: int32(rid)}, nil
 }
 
 func (s *grpcServer) SearchRestaurant(ctx context.Context, r *pb.SearchRestaurantReq) (*pb.SearchRestaurantResp, error) {

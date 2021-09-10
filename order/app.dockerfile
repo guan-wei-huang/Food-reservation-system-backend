@@ -1,0 +1,10 @@
+FROM golang:1.17-alpine
+WORKDIR /order
+COPY go.mod ./
+COPY go.sum ./
+RUN go mode download
+
+COPY *.go ./
+RUN go build -o /go/bin/app ./order/cmd/main.go
+EXPOSE 8000
+CMD [ "app" ]

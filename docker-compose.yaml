@@ -1,0 +1,74 @@
+version: "3.9"
+
+services:
+  order:
+    build:
+      context: ./order
+      dockerfile: ./app.dockerfile
+    depends_on: 
+      - order_db
+    environment: 
+      DATABASE_DSN: postgres://apple:123456@order_db/apple?sslmode=disable
+      PORT: 3000
+    ports: 
+      - 3000:3000
+    restart: on-failure
+
+  restaurant:
+    build: 
+      context: ./restaurant
+      dockerfile: ./app.dockerfile
+    depends_on: 
+      - restaurant_db
+    environment: 
+      DATABASE_DSN: postgres://apple:123456@restaurant_db/apple?sslmode=disable
+      PORT: 3001
+    ports:
+      - 3001:3001
+    restart: on-failure
+
+  user:
+    build: 
+      context: ./user
+      dockerfile: ./app.dockerfile
+    depends_on: 
+      - user_db
+    environment: 
+      DATABASE_DSN: postgres://apple:123456@user_db/apple?sslmode=disable
+      PORT: 3002
+    ports: 
+      - 3002:3002
+    restart: on-failure
+
+  order_db:
+    build:
+      context: ./order
+      dockerfile: ./db.dockerfile
+    environment: 
+      POSTGRES_DB: apple
+      POSTGRES_PORT: 1234
+      POSTGRES_USER: apple
+      POSTGRES_PASSWORD: 123456
+    restart: always
+
+  restaurant_db:
+    build:
+      context: ./restaurant
+      dockerfile: ./db.dockerfile
+    environment: 
+      POSTGRES_DB: apple
+      POSTGRES_PORT: 1234
+      POSTGRES_USER: apple
+      POSTGRES_PASSWORD: 123456 
+    restart: always
+
+  user_db:
+    build: 
+      context: ./user
+      dockerfile: ./db.dockerfile
+    environment: 
+      POSTGRES_DB: apple
+      POSTGRES_PORT: 1234
+      POSTGRES_USER: apple
+      POSTGRES_PASSWORD: 123456
+    restart: always

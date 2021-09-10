@@ -31,7 +31,7 @@ type Food struct {
 }
 
 type Service interface {
-	CreateRestaurant(ctx context.Context, r *Restaurant) error
+	CreateRestaurant(ctx context.Context, r *Restaurant) (int, error)
 	CreateFood(ctx context.Context, f *Food) error
 	GetRestaurantMenu(ctx context.Context, rid int) (*Menu, error)
 	SearchRestaurant(ctx context.Context, location string) ([]*Restaurant, error)
@@ -53,13 +53,13 @@ func (s *restaurantService) GetRestaurantMenu(ctx context.Context, rid int) (*Me
 	return menu, nil
 }
 
-func (s *restaurantService) CreateRestaurant(ctx context.Context, r *Restaurant) error {
+func (s *restaurantService) CreateRestaurant(ctx context.Context, r *Restaurant) (int, error) {
 	//  TODO: translate location to latitude and longtitude
-
-	if err := s.repo.CreateRestaurant(ctx, r); err != nil {
-		return err
+	rid, err := s.repo.CreateRestaurant(ctx, r)
+	if err != nil {
+		return 0, err
 	}
-	return nil
+	return rid, nil
 }
 
 func (s *restaurantService) CreateFood(ctx context.Context, f *Food) error {

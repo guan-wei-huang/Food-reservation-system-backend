@@ -31,7 +31,8 @@ message Food {
 
 message GeneralResponse {
     bool complete = 1;
-    string error = 2;
+    int32 id = 2;
+    string error = 3;
 }
 
 message MenuRequest {

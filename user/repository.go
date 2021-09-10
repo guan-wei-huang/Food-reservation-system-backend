@@ -2,9 +2,7 @@ package user
 
 import (
 	"context"
-
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
+	"database/sql"
 )
 
 type Repository interface {
@@ -14,15 +12,18 @@ type Repository interface {
 }
 
 type repository struct {
-	db *gorm.DB
+	db *sql.DB
 }
 
 func NewUserRepository(dsn string) (Repository, error) {
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err
 	}
 
+	if err = db.Ping(); err != nil {
+		return nil, err
+	}
 	return &repository{db}, nil
 }
 
@@ -31,17 +32,50 @@ func (r *repository) Close() {
 }
 
 func (r *repository) GetUser(ctx context.Context, name string) (*User, error) {
-	var user = &User{Name: name}
-	if err := r.db.WithContext(ctx).Model(&User{}).First(user).Error; err != nil {
+	rows, err := r.db.QueryContext(
+		ctx,
+		`SELECT id, name, password
+		FROM user
+		WHERE name = $1`,
+		name,
+	)
+	if err != nil {
 		return nil, err
 	}
-	return user, nil
+	defer rows.Close()
+
+	var u User
+	for rows.Next() {
+		if err = rows.Scan(&u.ID, &u.Name, &u.Password); err != nil {
+			return nil, err
+		}
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return &u, nil
 }
 
 func (r *repository) CreateUser(ctx context.Context, name, password string) (*User, error) {
-	var user = &User{Name: name, Password: password}
-	if err := r.db.WithContext(ctx).Model(&User{}).Create(user).Error; err != nil {
+	result, err := r.db.ExecContext(
+		ctx,
+		`INSERT INTO user (name, password)
+		VALUES ($1, $2)`,
+		name,
+		password,
+	)
+	if err != nil {
 		return nil, err
 	}
-	return user, nil
+
+	uid, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+	return &User{
+		ID:       int(uid),
+		Name:     name,
+		Password: password,
+	}, nil
 }

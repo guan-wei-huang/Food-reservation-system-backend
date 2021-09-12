@@ -1,0 +1,38 @@
+definitions:
+  main.Order:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      products:
+        items:
+          $ref: '#/definitions/main.Product'
+        type: array
+      rid:
+        type: integer
+      uid:
+        type: integer
+    type: object
+  main.Product:
+    properties:
+      fid:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      quantity:
+        type: integer
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: a885131@gmail.com
+    name: gmail:a885131 at gmail.com
+    url: mailto:a885131@gmail.com
+  description: foodpanda
+  title: reserve restaurant
+  version: v1.0
+paths: {}
+swagger: "2.0"

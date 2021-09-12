@@ -22,6 +22,15 @@ func NewHandler(service Service) *Handler {
 	return &Handler{service}
 }
 
+// @Summary new user register
+// @Description new user register
+// @Tags user
+// @Accept application/json
+// @Produce application/json
+// @Param name body string true "name"
+// @Param password body string true "password"
+// @Success 200
+// @Route /register [POST]
 func (handler *Handler) NewUser(c *gin.Context) {
 	ctx := context.Background()
 
@@ -46,6 +55,15 @@ func (handler *Handler) NewUser(c *gin.Context) {
 	})
 }
 
+// @Summary user login
+// @Description user login and return token
+// @Tags user
+// @Accept application/json
+// @Produce application/json
+// @Param name body string true "name"
+// @Param password body string true "password"
+// @Success 200 string string "token and refresh token"
+// @Route /login [POST]
 func (handler *Handler) UserLogin(c *gin.Context) {
 	ctx := context.Background()
 
@@ -80,6 +98,14 @@ func (handler *Handler) UserLogin(c *gin.Context) {
 	c.JSON(http.StatusOK, nil)
 }
 
+// @Summary get restaurant'e menu
+// @Description provide restaurant id to get it's menu
+// @Tags restaurant
+// @Accept application/json
+// @Produce application/json
+// @Param rid path int true "restaurant's id"
+// @Success 200 string restaurant's menu
+// @Route /restaurant/{rid} [GET]
 func (handler *Handler) GetRestaurantMenu(c *gin.Context) {
 	ctx := context.Background()
 
@@ -109,6 +135,14 @@ func (handler *Handler) GetRestaurantMenu(c *gin.Context) {
 	})
 }
 
+// @Summary search restaurant
+// @Description provide address to find nearby restaurant
+// @Tags restaurant
+// @Accept application/json
+// @Produce applicatoin/json
+// @Param location path string true "address"
+// @Success 200
+// @Route /restaurant/{location} [GET]
 func (handler *Handler) GetNearbyRestaurant(c *gin.Context) {
 	ctx := context.Background()
 
@@ -134,6 +168,17 @@ func (handler *Handler) GetNearbyRestaurant(c *gin.Context) {
 	})
 }
 
+// @Summary create food
+// @Description restaurant insert new food
+// @Tags restaurant
+// @Accept application/json
+// @Produce application/json
+// @Param rid path int true "restaurant id"
+// @Param name body string true "food's name"
+// @Param description body string true "food's description"
+// @Param price body float32 true "food's price"
+// @Success 200
+// @Route /restaurant/{rid}/food [POST]
 func (handler *Handler) CreateFood(c *gin.Context) {
 	ctx := context.Background()
 
@@ -155,6 +200,18 @@ func (handler *Handler) CreateFood(c *gin.Context) {
 	c.JSON(http.StatusOK, nil)
 }
 
+// @Summary create restaurant
+// @Description register for restaurant
+// @Tags restaurant
+// @Accept application/json
+// @Produce application/json
+// @Param name body string true "restaurant name"
+// @Param description body string true "restaurant description"
+// @Param Location body string true "restaurant location"
+// @Param Latitude body float32 true "restaurant latitude"
+// @Param Longtitude body float32 true "restaurant longtitude"
+// @Success 200
+// @Route /restaurant [POST]
 func (handler *Handler) CreateRestaurant(c *gin.Context) {
 	ctx := context.Background()
 
@@ -175,6 +232,14 @@ func (handler *Handler) CreateRestaurant(c *gin.Context) {
 	c.JSON(http.StatusOK, nil)
 }
 
+// @Summary create order
+// @Description user create order
+// @Tags order
+// @Accept application/json
+// @Produce application/json
+// @Param order body Order true "user's order"
+// @Success 200
+// @Route /order [POST]
 func (handler *Handler) CreateOrder(c *gin.Context) {
 	ctx := c.Request.Context()
 	userIds := ctx.Value(contextType("userId")).(string)
@@ -204,6 +269,14 @@ func (handler *Handler) CreateOrder(c *gin.Context) {
 	})
 }
 
+// @Summary get order
+// @Description fetch user's order
+// @Tags order
+// @Accept application/json
+// @Produce application/json
+// @Param oid path int true "order id"
+// @Success 200
+// @Route /order/{oid} [GET]
 func (handler *Handler) GetOrder(c *gin.Context) {
 	ctx := context.Background()
 	userIds := ctx.Value(contextType("userId")).(string)
@@ -234,6 +307,13 @@ func (handler *Handler) GetOrder(c *gin.Context) {
 	})
 }
 
+// @Summary get orders
+// @Description get all of order from user
+// @Tags order
+// @Accept application/json
+// @Produce application/json
+// @Success 200
+// @Route /user/order [GET]
 func (handler *Handler) GetOrderForUser(c *gin.Context) {
 	ctx := context.Background()
 	userIds := ctx.Value(contextType("userId")).(string)

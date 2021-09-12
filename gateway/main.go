@@ -8,6 +8,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// @title reserve restaurant
+// @version v1.0
+// @description foodpanda
+// @contact.name  gmail:a885131 at gmail.com
+// @contact.url mailto:a885131@gmail.com
+// @contact.email a885131@gmail.com
+// @host localhost:7999
 func main() {
 	r := gin.Default()
 

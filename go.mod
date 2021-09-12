@@ -3,7 +3,6 @@ module reserve_restaurant
 go 1.16
 
 require (
-    "gorm.io/driver/postgres" v1.1.0
     "gorm.io/gorm" v1.21.9
     "google.golang.org/grpc" v1.31.0
     "google.golang.org/protobuf" v1.27.1
@@ -13,4 +12,6 @@ require (
     "github.com/joho/godotenv" v1.3.0
     "github.com/twpayne/go-geom" v1.4.1
     "github.com/kelseyhightower/envconfig" v1.4.0
+    "github.com/swaggo/swag" v1.7.1
+    "github.com/swaggo/gin-swagger" v1.3.0
 )

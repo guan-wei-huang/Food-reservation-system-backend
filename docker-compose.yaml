@@ -1,10 +1,24 @@
 version: "3.9"
 
 services:
+  gateway: 
+    build:
+      context: .
+      dockerfile: ./gateway/app.dockerfile
+    depends_on: 
+      - order
+      - restaurant
+      - user
+    environment: 
+      ORDER_URL: order:3000
+      USER_URL: user:3002
+      RESTAURANT_URL: restaurant:3001
+    restart: always
+
   order:
     build:
-      context: ./order
-      dockerfile: ./app.dockerfile
+      context: .
+      dockerfile: ./order/app.dockerfile
     depends_on: 
       - order_db
     environment: 
@@ -16,12 +30,13 @@ services:
 
   restaurant:
     build: 
-      context: ./restaurant
-      dockerfile: ./app.dockerfile
+      context: .
+      dockerfile: ./restaurant/app.dockerfile
     depends_on: 
       - restaurant_db
-    environment: 
-      DATABASE_DSN: postgres://apple:123456@restaurant_db/apple?sslmode=disable
+    environment:
+      #"postgresql://%s:%s@%s:%d/%s?sslmode=disable", ds.DBUser, ds.DBPass, ds.Host, ds.Port, ds.DBName) 
+      DATABASE_DSN: postgresql://apple:123456@restaurant_db:1234/apple?sslmode=disable
       PORT: 3001
     ports:
       - 3001:3001
@@ -29,8 +44,8 @@ services:
 
   user:
     build: 
-      context: ./user
-      dockerfile: ./app.dockerfile
+      context: ./
+      dockerfile: ./user/app.dockerfile
     depends_on: 
       - user_db
     environment: 
@@ -60,6 +75,8 @@ services:
       POSTGRES_PORT: 1234
       POSTGRES_USER: apple
       POSTGRES_PASSWORD: 123456 
+    ports:
+      - 1234:1234
     restart: always
 
   user_db:

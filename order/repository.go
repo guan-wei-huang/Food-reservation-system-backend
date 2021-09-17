@@ -4,6 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
+
+	_ "github.com/lib/pq"
 )
 
 var (
@@ -22,7 +25,8 @@ type repository struct {
 }
 
 func NewOrderRepository(dsn string) (Repository, error) {
-	db, err := sql.Open("postgre", dsn)
+	log.Println("order repository dsn: ", dsn)
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err
 	}

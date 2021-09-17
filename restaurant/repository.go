@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 
+	_ "github.com/lib/pq"
 	"github.com/twpayne/go-geom/encoding/ewkb"
 	"github.com/twpayne/go-geom/encoding/geojson"
 )
@@ -28,7 +29,7 @@ type repository struct {
 }
 
 func NewRestaurantRepository(dsn string) (Repository, error) {
-	db, err := sql.Open("postgre", dsn)
+	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err
 	}

@@ -14,7 +14,7 @@ func (handler *Handler) Register(r *gin.Engine) {
 	r.POST("/restaurant/:rid/food", handler.CreateFood)
 	r.POST("/restaurant", handler.CreateRestaurant)
 
-	r.GET("/restaurant/:location", handler.GetNearbyRestaurant)
+	r.GET("/search/:location", handler.GetNearbyRestaurant)
 
 	r.GET("/order/:oid", handler.GetOrder)
 	r.GET("/user/order", handler.GetOrderForUser)

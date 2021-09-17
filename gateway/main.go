@@ -2,11 +2,16 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
 )
+
+type Config struct {
+	OrderUrl      string `envconfig:"ORDER_URL"`
+	UserUrl       string `envconfig:"USER_URL"`
+	RestaurantUrl string `envconfig:"RESTAURANT_URL"`
+}
 
 // @title reserve restaurant
 // @version v1.0
@@ -18,10 +23,14 @@ import (
 func main() {
 	r := gin.Default()
 
-	if err := godotenv.Load(".env"); err != nil {
-		log.Fatalf("load .env failed: %v", err)
+	var config Config
+	err := envconfig.Process("", &config)
+	if err != nil {
+		log.Fatalf("parse env file failed: %v", err)
+		return
 	}
-	service, err := NewGatewayServer(os.Getenv("ORDER_URL"), os.Getenv("USER_URL"), os.Getenv("RESTAURANT_URL"))
+
+	service, err := NewGatewayServer(config.OrderUrl, config.UserUrl, config.RestaurantUrl)
 	if err != nil {
 		log.Fatalf("init service err: %v", err)
 	}

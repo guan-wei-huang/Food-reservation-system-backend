@@ -3,6 +3,8 @@ package user
 import (
 	"context"
 	"database/sql"
+
+	_ "github.com/lib/pq"
 )
 
 type Repository interface {
@@ -16,6 +18,7 @@ type repository struct {
 }
 
 func NewUserRepository(dsn string) (Repository, error) {
+	//log.Println("dsn: ", dsn)
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err

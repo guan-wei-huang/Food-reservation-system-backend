@@ -1,2 +1,2 @@
-FROM postgres:13.4-alpine
+FROM mdillon/postgis
 ADD . /docker-entrypoint-initdb.d

@@ -1,10 +1,9 @@
 FROM golang:1.17-alpine
-WORKDIR /user
-COPY go.mod ./
-COPY go.sum ./
-RUN go mode download
+WORKDIR /go/src/github.com/guan-wei-huang/reserve-restaurant
+COPY go.mod go.sum ./
+RUN go mod download
 
-COPY *.go ./
-RUN go build -o /go/bin/app ./user/cmd/main.go
-EXPOSE 8002
-CMD [ "app" ]
+COPY user user
+RUN GO111MODULE=on go build -o app ./user/cmd/main.go
+EXPOSE 7999
+CMD [ "./app" ]

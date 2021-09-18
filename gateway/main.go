@@ -19,7 +19,7 @@ type Config struct {
 // @contact.name  gmail:a885131 at gmail.com
 // @contact.url mailto:a885131@gmail.com
 // @contact.email a885131@gmail.com
-// @host localhost:7999
+// @host localhost:8080
 func main() {
 	r := gin.Default()
 

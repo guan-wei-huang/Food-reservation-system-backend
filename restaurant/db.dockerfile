@@ -1,2 +1,2 @@
-FROM mdillon/postgis
-ADD . /docker-entrypoint-initdb.d
+FROM postgis/postgis
+ADD . /docker-entrypoint-initdb.

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -8,6 +9,7 @@ import (
 )
 
 type Config struct {
+	Port          string `envconfig:"PORT"`
 	OrderUrl      string `envconfig:"ORDER_URL"`
 	UserUrl       string `envconfig:"USER_URL"`
 	RestaurantUrl string `envconfig:"RESTAURANT_URL"`
@@ -36,6 +38,7 @@ func main() {
 	}
 
 	handler := NewHandler(service)
-	handler.Register(r)
-	r.Run()
+	config.Port = "8080"
+	handler.Register(r, config.Port)
+	r.Run(fmt.Sprintf(":%v", config.Port))
 }

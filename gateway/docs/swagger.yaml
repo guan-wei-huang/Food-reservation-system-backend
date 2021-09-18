@@ -25,7 +25,7 @@ definitions:
       quantity:
         type: integer
     type: object
-host: localhost:3000
+host: localhost:8080
 info:
   contact:
     email: a885131@gmail.com
@@ -34,5 +34,232 @@ info:
   description: foodpanda
   title: reserve restaurant
   version: v1.0
-paths: {}
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: user login and return token
+      parameters:
+      - description: name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token and refresh token
+          schema:
+            type: string
+      summary: user login
+      tags:
+      - user
+  /order:
+    post:
+      consumes:
+      - application/json
+      description: user create order
+      parameters:
+      - description: user's order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/main.Order'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: create order
+      tags:
+      - order
+  /order/{oid}:
+    get:
+      consumes:
+      - application/json
+      description: fetch user's order
+      parameters:
+      - description: order id
+        in: path
+        name: oid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: get order
+      tags:
+      - order
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: new user register
+      parameters:
+      - description: name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: new user register
+      tags:
+      - user
+  /restaurant:
+    post:
+      consumes:
+      - application/json
+      description: register for restaurant
+      parameters:
+      - description: restaurant name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: restaurant description
+        in: body
+        name: description
+        required: true
+        schema:
+          type: string
+      - description: restaurant location
+        in: body
+        name: Location
+        required: true
+        schema:
+          type: string
+      - description: restaurant latitude
+        in: body
+        name: Latitude
+        required: true
+        schema:
+          type: number
+      - description: restaurant longtitude
+        in: body
+        name: Longtitude
+        required: true
+        schema:
+          type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: create restaurant
+      tags:
+      - restaurant
+  /restaurant/{location}:
+    get:
+      consumes:
+      - application/json
+      description: provide address to find nearby restaurant
+      parameters:
+      - description: address
+        in: path
+        name: location
+        required: true
+        type: string
+      produces:
+      - applicatoin/json
+      responses:
+        "200":
+          description: ""
+      summary: search restaurant
+      tags:
+      - restaurant
+  /restaurant/{rid}:
+    get:
+      consumes:
+      - application/json
+      description: provide restaurant id to get it's menu
+      parameters:
+      - description: restaurant's id
+        in: path
+        name: rid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: get restaurant'e menu
+      tags:
+      - restaurant
+  /restaurant/{rid}/food:
+    post:
+      consumes:
+      - application/json
+      description: restaurant insert new food
+      parameters:
+      - description: restaurant id
+        in: path
+        name: rid
+        required: true
+        type: integer
+      - description: food's name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: food's description
+        in: body
+        name: description
+        required: true
+        schema:
+          type: string
+      - description: food's price
+        in: body
+        name: price
+        required: true
+        schema:
+          type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: create food
+      tags:
+      - restaurant
+  /user/order:
+    get:
+      consumes:
+      - application/json
+      description: get all of order from user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: get orders
+      tags:
+      - order
 swagger: "2.0"

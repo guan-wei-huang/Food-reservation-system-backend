@@ -22,6 +22,7 @@ func NewHandler(service Service) *Handler {
 	return &Handler{service}
 }
 
+// NewUser godoc
 // @Summary new user register
 // @Description new user register
 // @Tags user
@@ -30,7 +31,7 @@ func NewHandler(service Service) *Handler {
 // @Param name body string true "name"
 // @Param password body string true "password"
 // @Success 200
-// @Route /register [POST]
+// @Router /register [post]
 func (handler *Handler) NewUser(c *gin.Context) {
 	ctx := context.Background()
 
@@ -63,7 +64,7 @@ func (handler *Handler) NewUser(c *gin.Context) {
 // @Param name body string true "name"
 // @Param password body string true "password"
 // @Success 200 string string "token and refresh token"
-// @Route /login [POST]
+// @Router /login [POST]
 func (handler *Handler) UserLogin(c *gin.Context) {
 	ctx := context.Background()
 
@@ -105,7 +106,7 @@ func (handler *Handler) UserLogin(c *gin.Context) {
 // @Produce application/json
 // @Param rid path int true "restaurant's id"
 // @Success 200 string restaurant's menu
-// @Route /restaurant/{rid} [GET]
+// @Router /restaurant/{rid} [GET]
 func (handler *Handler) GetRestaurantMenu(c *gin.Context) {
 	ctx := context.Background()
 
@@ -142,7 +143,7 @@ func (handler *Handler) GetRestaurantMenu(c *gin.Context) {
 // @Produce applicatoin/json
 // @Param location path string true "address"
 // @Success 200
-// @Route /restaurant/{location} [GET]
+// @Router /restaurant/{location} [GET]
 func (handler *Handler) GetNearbyRestaurant(c *gin.Context) {
 	ctx := context.Background()
 
@@ -178,7 +179,7 @@ func (handler *Handler) GetNearbyRestaurant(c *gin.Context) {
 // @Param description body string true "food's description"
 // @Param price body float32 true "food's price"
 // @Success 200
-// @Route /restaurant/{rid}/food [POST]
+// @Router /restaurant/{rid}/food [POST]
 func (handler *Handler) CreateFood(c *gin.Context) {
 	ctx := context.Background()
 
@@ -211,7 +212,7 @@ func (handler *Handler) CreateFood(c *gin.Context) {
 // @Param Latitude body float32 true "restaurant latitude"
 // @Param Longtitude body float32 true "restaurant longtitude"
 // @Success 200
-// @Route /restaurant [POST]
+// @Router /restaurant [POST]
 func (handler *Handler) CreateRestaurant(c *gin.Context) {
 	ctx := context.Background()
 
@@ -239,7 +240,7 @@ func (handler *Handler) CreateRestaurant(c *gin.Context) {
 // @Produce application/json
 // @Param order body Order true "user's order"
 // @Success 200
-// @Route /order [POST]
+// @Router /order [POST]
 func (handler *Handler) CreateOrder(c *gin.Context) {
 	ctx := c.Request.Context()
 	userIds := ctx.Value(contextType("userId")).(string)
@@ -276,7 +277,7 @@ func (handler *Handler) CreateOrder(c *gin.Context) {
 // @Produce application/json
 // @Param oid path int true "order id"
 // @Success 200
-// @Route /order/{oid} [GET]
+// @Router /order/{oid} [GET]
 func (handler *Handler) GetOrder(c *gin.Context) {
 	ctx := context.Background()
 	userIds := ctx.Value(contextType("userId")).(string)
@@ -313,7 +314,7 @@ func (handler *Handler) GetOrder(c *gin.Context) {
 // @Accept application/json
 // @Produce application/json
 // @Success 200
-// @Route /user/order [GET]
+// @Router /user/order [GET]
 func (handler *Handler) GetOrderForUser(c *gin.Context) {
 	ctx := context.Background()
 	userIds := ctx.Value(contextType("userId")).(string)

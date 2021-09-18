@@ -1,12 +1,16 @@
 package main
 
 import (
+	"fmt"
+
+	_ "reserve_restaurant/gateway/docs"
+
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
-func (handler *Handler) Register(r *gin.Engine) {
+func (handler *Handler) Register(r *gin.Engine, port string) {
 	r.POST("/login", handler.UserLogin)
 	r.POST("/register", handler.NewUser)
 
@@ -21,7 +25,7 @@ func (handler *Handler) Register(r *gin.Engine) {
 	r.POST("/order", handler.CreateOrder)
 
 	if mode := gin.Mode(); mode == gin.DebugMode {
-		url := ginSwagger.URL("http://localhost:7999/swagger/doc.json")
+		url := ginSwagger.URL(fmt.Sprintf("http://localhost:%v/swagger/doc.json", port))
 		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 	}
 }

@@ -10,10 +10,13 @@ services:
       - restaurant
       - user
     environment: 
+      PORT: 8080
       ORDER_URL: order:3000
       USER_URL: user:3002
       RESTAURANT_URL: restaurant:3001
-    restart: always
+    ports:
+      - 8080:8080
+    restart: on-failure
 
   order:
     build:

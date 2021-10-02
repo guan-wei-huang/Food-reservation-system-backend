@@ -36,6 +36,7 @@ func (s *grpcServer) CreateOrder(ctx context.Context, r *pb.CreateOrderRequest) 
 		// switch err {
 		// case
 		// }
+		log.Println(err)
 		return nil, err
 	}
 	return &pb.CreateOrderResponse{Id: int32(oid)}, nil
@@ -46,6 +47,7 @@ func (s *grpcServer) GetOrder(ctx context.Context, r *pb.GetOrderRequest) (*pb.G
 	if err != nil {
 		switch err {
 		case ErrInvalidAccess:
+			log.Println("invalud access")
 			return &pb.GetOrderResponse{Error: err.Error()}, nil
 		case nil:
 			break
@@ -77,7 +79,8 @@ func (s *grpcServer) GetOrderForUser(ctx context.Context, r *pb.GetOrderRequest)
 
 func parseOrder(po *pb.Order) *Order {
 	order := &Order{
-		Rid:       int(po.Id),
+		Id:        int(po.Id),
+		Rid:       int(po.Rid),
 		Uid:       int(po.Uid),
 		CreatedAt: po.CreateAt.AsTime(),
 	}
@@ -92,7 +95,7 @@ func parseOrder(po *pb.Order) *Order {
 		}
 		products = append(products, product)
 	}
-	order.Products = &products
+	order.Products = products
 	return order
 }
 
@@ -105,7 +108,7 @@ func formatOrder(o *Order) *pb.Order {
 	}
 
 	products := []*pb.Order_Product{}
-	for _, p := range *o.Products {
+	for _, p := range o.Products {
 		product := &pb.Order_Product{
 			Fid:      int32(p.Fid),
 			Name:     p.Name,

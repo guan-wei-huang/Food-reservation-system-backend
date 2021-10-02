@@ -54,9 +54,11 @@ func (r *repository) CreateOrder(ctx context.Context, order *Order) (id int, err
 		err = tx.Commit()
 	}()
 
-	result, err := tx.ExecContext(
+	row := tx.QueryRowContext(
 		ctx,
-		"INSERT INTO order(rid, uid, created_at) VALUES($1, $2, $3)",
+		`INSERT INTO orders (restaurant_id, user_id, created_at) 
+		VALUES($1, $2, $3)
+		RETURNING id;`,
 		order.Rid,
 		order.Uid,
 		order.CreatedAt,
@@ -65,17 +67,15 @@ func (r *repository) CreateOrder(ctx context.Context, order *Order) (id int, err
 		return
 	}
 
-	id64, err := result.LastInsertId()
-	if err != nil {
+	if err = row.Scan(&id); err != nil {
 		return
 	}
 
-	id = int(id64)
 	stmt, err := tx.PrepareContext(ctx,
 		`INSERT INTO order_products(order_id, fid, name, price, quantity) 
 		VALUES ($1, $2, $3, $4, $5)`,
 	)
-	for _, p := range *order.Products {
+	for _, p := range order.Products {
 		_, err = stmt.ExecContext(ctx, id, p.Fid, p.Name, p.Price, p.Quantity)
 		if err != nil {
 			return
@@ -87,8 +87,14 @@ func (r *repository) CreateOrder(ctx context.Context, order *Order) (id int, err
 
 func (r *repository) GetOrder(ctx context.Context, id int) (*Order, error) {
 	order := &Order{}
-	row := r.db.QueryRowContext(ctx, "SELECT * FROM order WHERE id = $1", id)
-	switch err := row.Scan(&order.Id, &order.Rid, &order.Uid, &order.CreatedAt); err {
+	row := r.db.QueryRowContext(
+		ctx,
+		`SELECT o.id, o.user_id, o.restaurant_id, o.created_at
+		FROM orders AS o
+		WHERE o.id = $1`,
+		id,
+	)
+	switch err := row.Scan(&order.Id, &order.Uid, &order.Rid, &order.CreatedAt); err {
 	case sql.ErrNoRows:
 		return nil, ErrOrderInvalid
 	case nil:
@@ -101,7 +107,8 @@ func (r *repository) GetOrder(ctx context.Context, id int) (*Order, error) {
 		ctx,
 		`SELECT o.fid, o.name, o.price, o.quantity 
 		FROM order_products as o 
-		WHERE o.order_id = $1`,
+		WHERE o.order_id = $1
+		ORDER BY o.fid`,
 		id,
 	)
 	if err != nil {
@@ -123,17 +130,17 @@ func (r *repository) GetOrder(ctx context.Context, id int) (*Order, error) {
 		return nil, err
 	}
 
-	order.Products = &products
+	order.Products = products
 	return order, nil
 }
 
 func (r *repository) GetOrderForUser(ctx context.Context, id int) (*[]Order, error) {
 	rows, err := r.db.QueryContext(
 		ctx,
-		`SELECT o.id, o.rid, o.uid, o.created_at, op.fid, op.name, op.price, op.quantity
-		FROM order as o 
-		JOIN order_products as op ON (o.id = op.order_id)
-		WHERE o.uid = $1
+		`SELECT o.id, o.restaurant_id, o.user_id, o.created_at, op.fid, op.name, op.price, op.quantity
+		FROM orders AS o 
+		JOIN order_products AS op ON (o.id = op.order_id)
+		WHERE o.user_id = $1
 		ORDER BY o.id`,
 		id,
 	)
@@ -144,7 +151,7 @@ func (r *repository) GetOrderForUser(ctx context.Context, id int) (*[]Order, err
 
 	order := Order{}
 	orders := []Order{}
-	lastOrder := &Order{}
+	lastOrder := Order{Id: -1}
 	products := []Product{}
 
 	for rows.Next() {
@@ -155,17 +162,17 @@ func (r *repository) GetOrderForUser(ctx context.Context, id int) (*[]Order, err
 			return nil, err
 		}
 
-		if order.Id != lastOrder.Id && lastOrder != nil {
-			lastOrder.Products = &products
-			orders = append(orders, *lastOrder)
+		if lastOrder.Id != -1 && order.Id != lastOrder.Id {
+			lastOrder.Products = products
+			orders = append(orders, lastOrder)
 			products = products[:0]
 		}
 		products = append(products, p)
-		lastOrder = &order
+		lastOrder = order
 	}
 	// last item
-	if lastOrder != nil {
-		order.Products = &products
+	if lastOrder.Id != -1 {
+		order.Products = products
 		orders = append(orders, order)
 	}
 

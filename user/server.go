@@ -33,9 +33,10 @@ func (s *grpcServer) NewUser(ctx context.Context, r *pb.NewUserRequest) (*pb.New
 	user, err := s.service.UserRegister(ctx, r.Name, r.Password)
 	if err != nil {
 		if _, ok := err.(*UserError); !ok {
-			log.Fatal(err)
+			log.Println(err)
 			return nil, err
 		}
+		log.Println(err)
 		return &pb.NewUserResponse{Err: err.Error()}, nil
 	}
 	return &pb.NewUserResponse{Id: int32(user.ID)}, nil
@@ -45,9 +46,10 @@ func (s *grpcServer) UserLogin(ctx context.Context, r *pb.LoginRequest) (*pb.Log
 	token, refreshToken, err := s.service.UserLogin(ctx, r.Name, r.Password)
 	if err != nil {
 		if _, ok := err.(*UserError); !ok {
-			log.Fatal(err)
+			log.Println(err)
 			return nil, err
 		}
+		log.Println(err)
 		return &pb.LoginResponse{Err: err.Error()}, nil
 	}
 	return &pb.LoginResponse{Token: token, RefreshToken: refreshToken}, nil

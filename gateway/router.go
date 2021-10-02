@@ -20,9 +20,13 @@ func (handler *Handler) Register(r *gin.Engine, port string) {
 
 	r.GET("/search/:location", handler.GetNearbyRestaurant)
 
-	r.GET("/order/:oid", handler.GetOrder)
-	r.GET("/user/order", handler.GetOrderForUser)
-	r.POST("/order", handler.CreateOrder)
+	orderGroup := r.Group("/order")
+	orderGroup.Use(Auth())
+	{
+		orderGroup.GET("/:oid", handler.GetOrder)
+		orderGroup.GET("/", handler.GetOrderForUser)
+		orderGroup.POST("/", handler.CreateOrder)
+	}
 
 	if mode := gin.Mode(); mode == gin.DebugMode {
 		url := ginSwagger.URL(fmt.Sprintf("http://localhost:%v/swagger/doc.json", port))

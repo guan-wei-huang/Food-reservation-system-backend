@@ -10,6 +10,7 @@ import (
 type Repository interface {
 	Close()
 	GetUser(ctx context.Context, name string) (*User, error)
+	CheckUserExist(ctx context.Context, name string) (bool, error)
 	CreateUser(ctx context.Context, name, password string) (*User, error)
 }
 
@@ -38,7 +39,7 @@ func (r *repository) GetUser(ctx context.Context, name string) (*User, error) {
 	rows, err := r.db.QueryContext(
 		ctx,
 		`SELECT id, name, password
-		FROM user
+		FROM users
 		WHERE name = $1`,
 		name,
 	)
@@ -60,24 +61,50 @@ func (r *repository) GetUser(ctx context.Context, name string) (*User, error) {
 	return &u, nil
 }
 
-func (r *repository) CreateUser(ctx context.Context, name, password string) (*User, error) {
-	result, err := r.db.ExecContext(
+func (r *repository) CheckUserExist(ctx context.Context, name string) (bool, error) {
+	row, err := r.db.QueryContext(
 		ctx,
-		`INSERT INTO user (name, password)
-		VALUES ($1, $2)`,
+		`SELECT EXISTS (
+			SELECT 1
+			FROM users
+			WHERE name = $1
+		)`,
+		name,
+	)
+	if err != nil {
+		return false, err
+	}
+	defer row.Close()
+
+	var exists bool
+	for row.Next() {
+		if err := row.Scan(&exists); err != nil {
+			return false, err
+		}
+	}
+
+	if err = row.Err(); err != nil {
+		return false, err
+	}
+	return exists, nil
+}
+
+func (r *repository) CreateUser(ctx context.Context, name, password string) (*User, error) {
+	result := r.db.QueryRowContext(
+		ctx,
+		`INSERT INTO users (name, password)
+		VALUES ($1, $2)
+		RETURNING id`,
 		name,
 		password,
 	)
-	if err != nil {
-		return nil, err
-	}
 
-	uid, err := result.LastInsertId()
-	if err != nil {
+	var uid int
+	if err := result.Scan(&uid); err != nil {
 		return nil, err
 	}
 	return &User{
-		ID:       int(uid),
+		ID:       uid,
 		Name:     name,
 		Password: password,
 	}, nil

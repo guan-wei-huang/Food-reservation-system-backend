@@ -32,13 +32,17 @@ func main() {
 		return
 	}
 
+	config.OrderUrl = "localhost:3000"
+	config.RestaurantUrl = "localhost:3001"
+	config.UserUrl = "localhost:3002"
+	config.Port = "8080"
+
 	service, err := NewGatewayServer(config.OrderUrl, config.UserUrl, config.RestaurantUrl)
 	if err != nil {
 		log.Fatalf("init service err: %v", err)
 	}
 
 	handler := NewHandler(service)
-	config.Port = "8080"
 	handler.Register(r, config.Port)
 	r.Run(fmt.Sprintf(":%v", config.Port))
 }

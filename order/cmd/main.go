@@ -20,9 +20,12 @@ func main() {
 		return
 	}
 
+	config.DatabaseDsn = "postgres://apple:123456@localhost:8892/apple?sslmode=disable"
+	config.Port = 3000
+
 	r, err := order.NewOrderRepository(config.DatabaseDsn)
 	if err != nil {
-		log.Fatal("new restaurant repo error: ", err)
+		log.Fatal("new order repo error: ", err)
 		return
 	}
 	defer r.Close()

@@ -5,7 +5,6 @@ go 1.16
 require (
 	github.com/gin-gonic/gin v1.7.2
 	github.com/golang-jwt/jwt v3.2.2+incompatible
-	github.com/joho/godotenv v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.8.0
 	github.com/swaggo/gin-swagger v1.3.0

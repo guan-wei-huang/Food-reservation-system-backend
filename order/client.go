@@ -3,6 +3,7 @@ package order
 import (
 	"context"
 	"errors"
+	"log"
 	pb "reserve_restaurant/order/pb/order"
 
 	"google.golang.org/grpc"
@@ -30,6 +31,7 @@ func NewClient(url string) (*Client, error) {
 func (c *Client) CreateOrder(ctx context.Context, order *Order) (int, error) {
 	r, err := c.service.CreateOrder(ctx, &pb.CreateOrderRequest{Order: formatOrder(order)})
 	if err != nil {
+		log.Println(err)
 		return 0, ErrInternalServer
 	}
 
@@ -39,9 +41,10 @@ func (c *Client) CreateOrder(ctx context.Context, order *Order) (int, error) {
 	return int(r.Id), nil
 }
 
-func (c *Client) GetOrder(ctx context.Context, id int) (*Order, error) {
-	r, err := c.service.GetOrder(ctx, &pb.GetOrderRequest{Id: int32(id)})
+func (c *Client) GetOrder(ctx context.Context, id, uid int) (*Order, error) {
+	r, err := c.service.GetOrder(ctx, &pb.GetOrderRequest{Id: int32(id), Uid: int32(uid)})
 	if err != nil {
+		log.Println(err)
 		return nil, ErrInternalServer
 	}
 

@@ -3,6 +3,7 @@ package order
 import (
 	"context"
 	"errors"
+	"log"
 	"time"
 )
 
@@ -11,18 +12,18 @@ var (
 )
 
 type Product struct {
-	Fid      int
-	Name     string
-	Price    float32
-	Quantity int
+	Fid      int     `json:"fid" form:"fid"`
+	Name     string  `json:"name" form:"name"`
+	Price    float32 `json:"price" form:"price"`
+	Quantity int     `json:"quantity" form:"quantity"`
 }
 
 type Order struct {
-	Id        int
-	Rid       int
-	Uid       int
-	Products  *[]Product
-	CreatedAt time.Time
+	Id        int       `json:"id" form:"id"`
+	Rid       int       `json:"rid" form:"rid"`
+	Uid       int       `json:"uid" form:"uid"`
+	Products  []Product `json:"products" form:"products"`
+	CreatedAt time.Time `json:"created_at" form:"created_at"`
 }
 
 type Service interface {
@@ -53,6 +54,7 @@ func (s *orderService) GetOrder(ctx context.Context, oid, uid int) (*Order, erro
 		return nil, err
 	}
 
+	log.Println(order.Uid, " userid", uid)
 	if order.Uid != uid {
 		return nil, ErrInvalidAccess
 	}

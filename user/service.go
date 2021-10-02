@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"time"
 
@@ -13,9 +14,9 @@ import (
 )
 
 type User struct {
-	ID       int    `json:"id,omitempty"`
-	Name     string `json:"name"`
-	Password string `json:"password"`
+	ID       int    `json:"id,omitempty" form:"id"`
+	Name     string `json:"name" form:"name"`
+	Password string `json:"password" form:"password"`
 }
 
 type Service interface {
@@ -32,21 +33,21 @@ func NewService(r Repository) Service {
 }
 
 func (s *userService) UserRegister(ctx context.Context, name, password string) (*User, error) {
-	_, err := s.repo.GetUser(ctx, name)
-	if err == nil {
+	exists, err := s.repo.CheckUserExist(ctx, name)
+	if err != nil {
+		return nil, fmt.Errorf("check user exist failed: %v", err)
+	} else if exists {
 		return nil, NewUserError("this name has been registered")
-	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, fmt.Errorf("fetch user:%v failed", name)
 	}
 
 	newPassword, err := hashPassword(password)
 	if err != nil {
-		return nil, fmt.Errorf("hash user:%v's password failed", name)
+		return nil, fmt.Errorf("hash user:%v's password failed: %v", name, err)
 	}
 
 	user, err := s.repo.CreateUser(ctx, name, newPassword)
 	if err != nil {
-		return nil, fmt.Errorf("create user:%v failed", name)
+		return nil, fmt.Errorf("create user:%v failed: %v", name, err)
 	}
 	return user, nil
 }
@@ -57,10 +58,16 @@ func (s *userService) UserLogin(ctx context.Context, name, password string) (str
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return "", "", NewUserError("account doesn't exist")
 		}
-		return "", "", fmt.Errorf("fetch user:%v failed", name)
+		return "", "", fmt.Errorf("fetch user:%v failed: %v", name, err)
 	}
 
-	if ok := comparePassword(password, user.Password); !ok {
+	hashed, err := hashPassword(password)
+	if err != nil {
+		return "", "", fmt.Errorf("hash user: %v's password failed: %v", name, err)
+	}
+
+	log.Println(password, "\n", hashed, "\n", user.Password)
+	if ok := comparePassword(user.Password, password); !ok {
 		return "", "", NewUserError("password is wrong")
 	}
 
@@ -87,12 +94,12 @@ func comparePassword(p1, p2 string) bool {
 
 func generateToken(u *User) (string, error) {
 	claim := &jwt.MapClaims{
-		"exp":      time.Now().Add(time.Minute * 15).Unix(),
+		"exp":      time.Now().Add(time.Hour).Unix(),
 		"userId":   strconv.Itoa(u.ID),
 		"userName": u.Name,
 	}
 
-	token, err := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), claim).SignedString("secret")
+	token, err := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), claim).SignedString([]byte("secret"))
 	if err != nil {
 		return "", err
 	}

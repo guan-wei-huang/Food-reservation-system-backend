@@ -35,12 +35,12 @@ func ListenGRPC(s Service, port int) error {
 
 func (s *grpcServer) GetRestaurantMenu(ctx context.Context, r *pb.MenuRequest) (*pb.MenuResponse, error) {
 	m, err := s.service.GetRestaurantMenu(ctx, int(r.Rid))
-
 	if err != nil {
 		switch err {
 		case ErrRestaurantIdWrong:
 			return &pb.MenuResponse{Error: err.Error()}, nil
 		default:
+			log.Println("get restaurant menu failed:", err)
 			return nil, err
 		}
 	}

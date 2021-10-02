@@ -46,19 +46,17 @@ func (r *repository) Close() {
 
 func (r *repository) CreateRestaurant(ctx context.Context, rest *Restaurant) (int, error) {
 	stmt := `INSERT INTO restaurant (name, description, location, coordinate) 
-		VALUES ($1, $2, $3, ST_GeomFromText($4, 4326));`
-
+		VALUES ($1, $2, $3, ST_GeomFromText($4, 4326))
+		RETURNING id;`
 	point := fmt.Sprintf("Point(%f %f)", rest.Latitude, rest.Longitude)
-	result, err := r.db.ExecContext(ctx, stmt, rest.Name, rest.Description, rest.Location, point)
-	if err != nil {
-		return -1, err
-	}
 
-	id, err := result.LastInsertId()
-	if err != nil {
+	row := r.db.QueryRowContext(ctx, stmt, rest.Name, rest.Description, rest.Location, point)
+
+	var rid int
+	if err := row.Scan(&rid); err != nil {
 		return -1, err
 	}
-	return int(id), nil
+	return rid, nil
 }
 
 func (r *repository) CreateFood(ctx context.Context, f *Food) error {
@@ -75,7 +73,7 @@ func (r *repository) CreateFood(ctx context.Context, f *Food) error {
 func (r *repository) GetMenu(ctx context.Context, rid int) (*Menu, error) {
 	rows, err := r.db.QueryContext(
 		ctx,
-		`SELECT (fid, rid, name, description, price) 
+		`SELECT fid, rid, name, description, price
 		FROM foods 
 		WHERE rid = $1
 		ORDER BY foods.fid;`,
@@ -88,13 +86,13 @@ func (r *repository) GetMenu(ctx context.Context, rid int) (*Menu, error) {
 
 	foods := []Food{}
 	for rows.Next() {
-		f := &Food{}
+		f := Food{}
 		err = rows.Scan(&f.Fid, &f.Rid, &f.Name, &f.Description, &f.Price)
 		if err != nil {
 			return nil, err
 		}
 
-		foods = append(foods, *f)
+		foods = append(foods, f)
 	}
 
 	if err = rows.Err(); err != nil {

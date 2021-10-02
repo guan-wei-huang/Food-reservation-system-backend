@@ -9,12 +9,12 @@ import (
 )
 
 type Restaurant struct {
-	ID          int     `json:"id"`
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	Location    string  `json:"location"`
-	Latitude    float64 `json:"latitude"`
-	Longitude   float64 `json:"longitude"`
+	ID          int     `json:"id" form:"id"`
+	Name        string  `json:"name" form:"name"`
+	Description string  `json:"description" form:"description"`
+	Location    string  `json:"location" form:"location"`
+	Latitude    float64 `json:"latitude" form:"latitude"`
+	Longitude   float64 `json:"longitude" form:"longtitude"`
 }
 
 type Menu struct {
@@ -23,11 +23,11 @@ type Menu struct {
 }
 
 type Food struct {
-	Fid         int     `json:"fid"`
-	Rid         int     `json:"rid"`
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	Price       float32 `json:"price"`
+	Fid         int     `json:"fid" form:"fid"`
+	Rid         int     `json:"rid" form:"rid"`
+	Name        string  `json:"name" form:"name"`
+	Description string  `json:"description" form:"description"`
+	Price       float32 `json:"price" form:"price"`
 }
 
 type Service interface {

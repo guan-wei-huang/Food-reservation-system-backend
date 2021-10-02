@@ -18,7 +18,7 @@ type Service interface {
 	SearchRestaurant(context.Context, string) ([]*restaurant.Restaurant, error)
 
 	CreateOrder(context.Context, *order.Order) (int, error)
-	GetOrder(context.Context, int) (*order.Order, error)
+	GetOrder(context.Context, int, int) (*order.Order, error)
 	GetOrderForUser(context.Context, int) ([]*order.Order, error)
 }
 
@@ -126,11 +126,11 @@ func (s *apiGatewayService) CreateOrder(ctx context.Context, order *order.Order)
 	return id, nil
 }
 
-func (s *apiGatewayService) GetOrder(ctx context.Context, id int) (*order.Order, error) {
+func (s *apiGatewayService) GetOrder(ctx context.Context, id, uid int) (*order.Order, error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Second*3)
 	defer cancel()
 
-	order, err := s.orderClient.GetOrder(ctx, id)
+	order, err := s.orderClient.GetOrder(ctx, id, uid)
 	if err != nil {
 		return nil, err
 	}

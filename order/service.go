@@ -3,7 +3,7 @@ package order
 import (
 	"context"
 	"errors"
-	"log"
+	"fmt"
 	"time"
 )
 
@@ -43,18 +43,19 @@ func NewService(r Repository) Service {
 func (s *orderService) CreateOrder(ctx context.Context, order *Order) (int, error) {
 	oid, err := s.repo.CreateOrder(ctx, order)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("create order failed: %v", err)
 	}
 	return oid, nil
 }
 
 func (s *orderService) GetOrder(ctx context.Context, oid, uid int) (*Order, error) {
 	order, err := s.repo.GetOrder(ctx, oid)
-	if err != nil {
-		return nil, err
+	if errors.Is(err, ErrOrderInvalid) {
+		return nil, ErrOrderInvalid
+	} else if err != nil {
+		return nil, fmt.Errorf("get order failed: %v", err)
 	}
 
-	log.Println(order.Uid, " userid", uid)
 	if order.Uid != uid {
 		return nil, ErrInvalidAccess
 	}
@@ -64,7 +65,7 @@ func (s *orderService) GetOrder(ctx context.Context, oid, uid int) (*Order, erro
 func (s *orderService) GetOrderForUser(ctx context.Context, id int) (*[]Order, error) {
 	orders, err := s.repo.GetOrderForUser(ctx, id)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get orders for user failed: %v", err)
 	}
 	return orders, nil
 }

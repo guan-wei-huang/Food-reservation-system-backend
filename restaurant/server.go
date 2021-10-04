@@ -3,11 +3,11 @@ package restaurant
 import (
 	"context"
 	"fmt"
-	"log"
 	"net"
 
 	pb "reserve_restaurant/restaurant/pb/restaurant"
 
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
@@ -16,6 +16,7 @@ var (
 )
 
 type grpcServer struct {
+	logger  *zap.SugaredLogger
 	service Service
 }
 
@@ -25,8 +26,12 @@ func ListenGRPC(s Service, port int) error {
 		return err
 	}
 
+	logger, _ := zap.NewDevelopment()
+	defer logger.Sync()
+	sugar := logger.Sugar()
+
 	serv := grpc.NewServer()
-	pb.RegisterRestaurantServiceServer(serv, &grpcServer{s})
+	pb.RegisterRestaurantServiceServer(serv, &grpcServer{sugar, s})
 	if err = serv.Serve(lis); err != nil {
 		return err
 	}
@@ -38,9 +43,10 @@ func (s *grpcServer) GetRestaurantMenu(ctx context.Context, r *pb.MenuRequest) (
 	if err != nil {
 		switch err {
 		case ErrRestaurantIdWrong:
+			s.logger.Info("client GetRestaurantMenu failed: %v", ErrRestaurantIdWrong)
 			return &pb.MenuResponse{Error: err.Error()}, nil
 		default:
-			log.Println("get restaurant menu failed:", err)
+			s.logger.Error(err.Error())
 			return nil, err
 		}
 	}
@@ -70,7 +76,7 @@ func (s *grpcServer) CreateFood(ctx context.Context, r *pb.CreateFoodRequest) (*
 	}
 
 	if err := s.service.CreateFood(ctx, f); err != nil {
-		log.Fatal(err)
+		s.logger.Error(err.Error())
 		return nil, err
 	}
 	return &pb.GeneralResponse{Complete: true}, nil
@@ -81,11 +87,13 @@ func (s *grpcServer) CreateRestaurant(ctx context.Context, r *pb.CreateRestReq) 
 		Name:        r.Rest.Name,
 		Description: r.Rest.Description,
 		Location:    r.Rest.Location,
+		Latitude:    float64(r.Rest.Latitude),
+		Longitude:   float64(r.Rest.Longtitude),
 	}
 
 	rid, err := s.service.CreateRestaurant(ctx, rest)
 	if err != nil {
-		log.Fatal(err)
+		s.logger.Error(err.Error())
 		return nil, err
 	}
 	return &pb.GeneralResponse{Complete: true, Id: int32(rid)}, nil
@@ -94,7 +102,7 @@ func (s *grpcServer) CreateRestaurant(ctx context.Context, r *pb.CreateRestReq) 
 func (s *grpcServer) SearchRestaurant(ctx context.Context, r *pb.SearchRestaurantReq) (*pb.SearchRestaurantResp, error) {
 	rests, err := s.service.SearchRestaurant(ctx, r.Location)
 	if err != nil {
-		log.Fatal(err)
+		s.logger.Error(err.Error())
 		return nil, err
 	}
 

@@ -14,6 +14,8 @@ message Restaurant {
     string name = 2;
     string description = 3;
     string location = 4;
+    float latitude = 5;
+    float longtitude = 6;
 }
 
 message Menu {

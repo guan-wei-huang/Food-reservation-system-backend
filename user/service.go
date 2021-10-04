@@ -2,15 +2,12 @@ package user
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"log"
 	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 type User struct {
@@ -53,27 +50,25 @@ func (s *userService) UserRegister(ctx context.Context, name, password string) (
 }
 
 func (s *userService) UserLogin(ctx context.Context, name, password string) (string, string, error) {
+	exist, err := s.repo.CheckUserExist(ctx, name)
+	if err != nil {
+		return "", "", fmt.Errorf("check user exist failed: %v", err)
+	} else if !exist {
+		return "", "", NewUserError("user doesn't exist")
+	}
+
 	user, err := s.repo.GetUser(ctx, name)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return "", "", NewUserError("account doesn't exist")
-		}
 		return "", "", fmt.Errorf("fetch user:%v failed: %v", name, err)
 	}
 
-	hashed, err := hashPassword(password)
-	if err != nil {
-		return "", "", fmt.Errorf("hash user: %v's password failed: %v", name, err)
-	}
-
-	log.Println(password, "\n", hashed, "\n", user.Password)
 	if ok := comparePassword(user.Password, password); !ok {
 		return "", "", NewUserError("password is wrong")
 	}
 
 	var token, refreshToken string
 	if token, err = generateToken(user); err != nil {
-		return "", "", fmt.Errorf("jwt parse failed: %v", err)
+		return "", "", fmt.Errorf("jwt format failed: %v", err)
 	}
 
 	return token, refreshToken, nil

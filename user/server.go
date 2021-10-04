@@ -3,15 +3,16 @@ package user
 import (
 	"context"
 	"fmt"
-	"log"
 	"net"
 
 	pb "reserve_restaurant/user/pb/user"
 
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
 type grpcServer struct {
+	logger  *zap.SugaredLogger
 	service Service
 }
 
@@ -21,8 +22,12 @@ func ListenGRPC(s Service, port int) error {
 		return err
 	}
 
+	logger, _ := zap.NewProduction()
+	defer logger.Sync()
+	sugar := logger.Sugar()
+
 	serv := grpc.NewServer()
-	pb.RegisterUserServiceServer(serv, &grpcServer{s})
+	pb.RegisterUserServiceServer(serv, &grpcServer{sugar, s})
 	if err = serv.Serve(lis); err != nil {
 		return err
 	}
@@ -33,10 +38,10 @@ func (s *grpcServer) NewUser(ctx context.Context, r *pb.NewUserRequest) (*pb.New
 	user, err := s.service.UserRegister(ctx, r.Name, r.Password)
 	if err != nil {
 		if _, ok := err.(*UserError); !ok {
-			log.Println(err)
+			s.logger.Error(err.Error())
 			return nil, err
 		}
-		log.Println(err)
+		s.logger.Infof("client NewUser failed: %v", err)
 		return &pb.NewUserResponse{Err: err.Error()}, nil
 	}
 	return &pb.NewUserResponse{Id: int32(user.ID)}, nil
@@ -46,10 +51,10 @@ func (s *grpcServer) UserLogin(ctx context.Context, r *pb.LoginRequest) (*pb.Log
 	token, refreshToken, err := s.service.UserLogin(ctx, r.Name, r.Password)
 	if err != nil {
 		if _, ok := err.(*UserError); !ok {
-			log.Println(err)
+			s.logger.Error(err.Error())
 			return nil, err
 		}
-		log.Println(err)
+		s.logger.Infof("client UserLogin failed: %v", err)
 		return &pb.LoginResponse{Err: err.Error()}, nil
 	}
 	return &pb.LoginResponse{Token: token, RefreshToken: refreshToken}, nil

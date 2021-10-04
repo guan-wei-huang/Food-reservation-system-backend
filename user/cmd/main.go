@@ -30,7 +30,7 @@ func main() {
 	}
 	defer repo.Close()
 
-	log.Printf("Listening on port %v...", config.Port)
 	s := user.NewService(repo)
+	log.Printf("Listening on port %v...", config.Port)
 	log.Fatal(user.ListenGRPC(s, config.Port))
 }

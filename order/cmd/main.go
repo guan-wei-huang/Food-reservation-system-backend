@@ -30,7 +30,7 @@ func main() {
 	}
 	defer r.Close()
 
-	log.Printf("Listening on port %v...", config.Port)
 	s := order.NewService(r)
+	log.Printf("Listening on port %v...", config.Port)
 	log.Fatal(order.ListenGRPC(s, config.Port))
 }

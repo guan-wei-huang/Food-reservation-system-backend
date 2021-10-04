@@ -94,13 +94,14 @@ func (r *repository) GetOrder(ctx context.Context, id int) (*Order, error) {
 		WHERE o.id = $1`,
 		id,
 	)
-	switch err := row.Scan(&order.Id, &order.Uid, &order.Rid, &order.CreatedAt); err {
-	case sql.ErrNoRows:
-		return nil, ErrOrderInvalid
-	case nil:
-		break
-	default:
-		return nil, err
+	err := row.Scan(&order.Id, &order.Uid, &order.Rid, &order.CreatedAt)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return nil, ErrOrderInvalid
+		default:
+			return nil, err
+		}
 	}
 
 	rows, err := r.db.QueryContext(

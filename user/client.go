@@ -3,7 +3,6 @@ package user
 import (
 	"context"
 	"errors"
-	"log"
 	pb "reserve_restaurant/user/pb/user"
 
 	"google.golang.org/grpc"
@@ -29,7 +28,6 @@ func NewClient(url string) (*Client, error) {
 }
 
 func (c *Client) NewUser(ctx context.Context, name, password string) (int, error) {
-	log.Println("new user: ", name, " ", password)
 	r, err := c.service.NewUser(ctx, &pb.NewUserRequest{Name: name, Password: password})
 	if err != nil {
 		return 0, ErrInternalServer

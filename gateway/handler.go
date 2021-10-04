@@ -302,7 +302,6 @@ func (handler *Handler) CreateOrder(c *gin.Context) {
 // @Success 200
 // @Router /order/{oid} [GET]
 func (handler *Handler) GetOrder(c *gin.Context) {
-	log.Println("go")
 	ctx := context.Background()
 	uids := c.GetString("userId")
 	uid, _ := strconv.Atoi(uids)
@@ -310,6 +309,7 @@ func (handler *Handler) GetOrder(c *gin.Context) {
 	oid, err := strconv.Atoi(c.Param("oid"))
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
+		return
 	}
 
 	order, err := handler.service.GetOrder(ctx, oid, uid)
@@ -322,7 +322,6 @@ func (handler *Handler) GetOrder(c *gin.Context) {
 		return
 	}
 
-	log.Println("a")
 	if order.Uid != uid {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return

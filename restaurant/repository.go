@@ -3,7 +3,6 @@ package restaurant
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"log"
 
@@ -12,12 +11,9 @@ import (
 	"github.com/twpayne/go-geom/encoding/geojson"
 )
 
-var (
-	ErrRestaurantIdWrong = errors.New("restaurant not found")
-)
-
 type Repository interface {
 	Close()
+	CheckRestaurantExist(ctx context.Context, rid int) (bool, error)
 	CreateRestaurant(ctx context.Context, rest *Restaurant) (int, error)
 	CreateFood(ctx context.Context, f *Food) error
 	GetMenu(ctx context.Context, rid int) (*Menu, error)
@@ -68,6 +64,24 @@ func (r *repository) CreateFood(ctx context.Context, f *Food) error {
 		return err
 	}
 	return nil
+}
+
+func (r *repository) CheckRestaurantExist(ctx context.Context, rid int) (bool, error) {
+	row := r.db.QueryRowContext(
+		ctx,
+		`SELECT EXISTS (
+			SELECT 1
+			FROM restaurant
+			WHERE id = $1
+		)`,
+		rid,
+	)
+
+	var exist bool
+	if err := row.Scan(&exist); err != nil {
+		return false, err
+	}
+	return exist, nil
 }
 
 func (r *repository) GetMenu(ctx context.Context, rid int) (*Menu, error) {

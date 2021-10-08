@@ -8,5 +8,5 @@ RUN apk update && apk add bash
 
 COPY restaurant restaurant
 RUN GO111MODULE=on go build -o app ./restaurant/cmd/main.go
-EXPOSE 8001
+EXPOSE 8080
 CMD [ "./wait-for-it.sh", "restaurant_db:5432", "--", "./app"]

@@ -20,8 +20,8 @@ func main() {
 		return
 	}
 
-	config.DatabaseDsn = "postgres://apple:123456@localhost:8892/apple?sslmode=disable"
-	config.Port = 3000
+	// config.DatabaseDsn = "postgres://apple:123456@localhost:8892/apple?sslmode=disable"
+	// config.Port = 3000
 
 	r, err := order.NewOrderRepository(config.DatabaseDsn)
 	if err != nil {

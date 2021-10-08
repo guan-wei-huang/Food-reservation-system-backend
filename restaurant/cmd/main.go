@@ -20,8 +20,8 @@ func main() {
 		return
 	}
 
-	config.DatabaseDsn = "postgres://apple:123456@localhost:8889/apple?sslmode=disable"
-	config.Port = 3001
+	// config.DatabaseDsn = "postgres://apple:123456@localhost:8889/apple?sslmode=disable"
+	// config.Port = 3001
 
 	repo, err := restaurant.NewRestaurantRepository(config.DatabaseDsn)
 	if err != nil {

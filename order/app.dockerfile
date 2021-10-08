@@ -5,5 +5,5 @@ RUN go mod download
 
 COPY order order
 RUN GO111MODULE=on go build -o app ./order/cmd/main.go
-EXPOSE 8000
+EXPOSE 8080
 CMD [ "./app" ]

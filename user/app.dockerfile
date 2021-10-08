@@ -5,5 +5,5 @@ RUN go mod download
 
 COPY user user
 RUN GO111MODULE=on go build -o app ./user/cmd/main.go
-EXPOSE 7999
+EXPOSE 8080
 CMD [ "./app" ]

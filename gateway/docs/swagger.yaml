@@ -64,6 +64,18 @@ paths:
       tags:
       - user
   /order:
+    get:
+      consumes:
+      - application/json
+      description: get all of order from user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: get orders
+      tags:
+      - order
     post:
       consumes:
       - application/json
@@ -249,17 +261,4 @@ paths:
       summary: create food
       tags:
       - restaurant
-  /user/order:
-    get:
-      consumes:
-      - application/json
-      description: get all of order from user
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: ""
-      summary: get orders
-      tags:
-      - order
 swagger: "2.0"

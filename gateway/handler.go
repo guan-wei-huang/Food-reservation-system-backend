@@ -88,19 +88,11 @@ func (handler *Handler) UserLogin(c *gin.Context) {
 		return
 	}
 
-	m := map[string]string{
+	c.JSON(http.StatusOK, gin.H{
 		"token_type":    "bearer",
 		"access_token":  token,
 		"refresh_token": refreshToken,
-	}
-	b, _ := json.MarshalIndent(m, "", " ")
-	_, err = c.Writer.Write(b)
-	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-
-	c.JSON(http.StatusOK, nil)
+	})
 }
 
 // @Summary get restaurant'e menu

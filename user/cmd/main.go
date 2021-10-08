@@ -20,8 +20,8 @@ func main() {
 		return
 	}
 
-	config.DatabaseDsn = "postgres://apple:123456@localhost:8890/apple?sslmode=disable"
-	config.Port = 3002
+	// config.DatabaseDsn = "postgres://apple:123456@localhost:8890/apple?sslmode=disable"
+	// config.Port = 3002
 
 	repo, err := user.NewUserRepository(config.DatabaseDsn)
 	if err != nil {

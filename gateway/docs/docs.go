@@ -71,6 +71,24 @@ var doc = `{
             }
         },
         "/order": {
+            "get": {
+                "description": "get all of order from user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "order"
+                ],
+                "summary": "get orders",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            },
             "post": {
                 "description": "user create order",
                 "consumes": [
@@ -347,26 +365,6 @@ var doc = `{
                         }
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": ""
-                    }
-                }
-            }
-        },
-        "/user/order": {
-            "get": {
-                "description": "get all of order from user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "order"
-                ],
-                "summary": "get orders",
                 "responses": {
                     "200": {
                         "description": ""

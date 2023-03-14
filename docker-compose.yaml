@@ -18,14 +18,7 @@ services:
       - 8080:8080
     restart: always
     networks:
-      - proxy
       - restaurant_service
-    labels:
-      - "traefik.docker.network=proxy"
-      - "traefik.enable=true"
-      - "traefik.basic.frontend.rule=Host:foodpanda.com"
-      - "traefik.basic.port=8080"
-      - "traefik.basic.protocol=http" 
 
   order:
     build:
@@ -34,7 +27,7 @@ services:
     depends_on: 
       - order_db
     environment: 
-      DATABASE_DSN: postgres://apple:123456@order_db/apple?sslmode=disable
+      DATABASE_DSN: postgres://apple:123456@order_db/order_db?sslmode=disable
       PORT: 3000
     ports: 
       - 3000:3000
@@ -50,7 +43,7 @@ services:
       - restaurant_db
     environment:
       #"postgresql://%s:%s@%s:%d/%s?sslmode=disable", ds.DBUser, ds.DBPass, ds.Host, ds.Port, ds.DBName) 
-      DATABASE_DSN: postgres://apple:123456@restaurant_db/apple?sslmode=disable
+      DATABASE_DSN: postgres://apple:123456@restaurant_db/restaurant_db?sslmode=disable
       PORT: 3001
     ports:
       - 3001:3001
@@ -65,7 +58,7 @@ services:
     depends_on: 
       - user_db
     environment: 
-      DATABASE_DSN: postgres://apple:123456@user_db/apple?sslmode=disable
+      DATABASE_DSN: postgres://apple:123456@user_db/user_db?sslmode=disable
       PORT: 3002
     ports: 
       - 3002:3002
@@ -78,7 +71,7 @@ services:
       context: ./order
       dockerfile: ./db.dockerfile
     environment: 
-      POSTGRES_DB: apple
+      POSTGRES_DB: order_db
       POSTGRES_USER: apple
       POSTGRES_PASSWORD: 123456
     networks:
@@ -90,7 +83,7 @@ services:
       context: ./restaurant
       dockerfile: ./db.dockerfile
     environment: 
-      POSTGRES_DB: apple
+      POSTGRES_DB: restaurant_db
       POSTGRES_USER: apple
       POSTGRES_PASSWORD: 123456 
     networks:
@@ -102,15 +95,22 @@ services:
       context: ./user
       dockerfile: ./db.dockerfile
     environment: 
-      POSTGRES_DB: apple
+      POSTGRES_DB: user_db
       POSTGRES_USER: apple
       POSTGRES_PASSWORD: 123456
     networks:
       - restaurant_service
     restart: always
 
-networks:
-  proxy:
-    external: true
+  adminer:
+    image: adminer:4.7.6
+    restart: always
+    ports:
+      - 55008:8080
+    environment:
+      - ADMINER_DEFAULT_SERVER=postgres
+    networks:
+      - restaurant_service
 
+networks:
   restaurant_service:

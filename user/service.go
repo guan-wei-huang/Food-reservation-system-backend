@@ -37,12 +37,12 @@ func (s *userService) UserRegister(ctx context.Context, name, password string) (
 		return nil, NewUserError("this name has been registered")
 	}
 
-	newPassword, err := hashPassword(password)
+	hashPassword, err := hashPassword(password)
 	if err != nil {
 		return nil, fmt.Errorf("hash user:%v's password failed: %v", name, err)
 	}
 
-	user, err := s.repo.CreateUser(ctx, name, newPassword)
+	user, err := s.repo.CreateUser(ctx, name, hashPassword)
 	if err != nil {
 		return nil, fmt.Errorf("create user:%v failed: %v", name, err)
 	}

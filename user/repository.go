@@ -19,7 +19,6 @@ type repository struct {
 }
 
 func NewUserRepository(dsn string) (Repository, error) {
-	//log.Println("dsn: ", dsn)
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
 		return nil, err

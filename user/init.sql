@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     name VARCHAR(10) NOT NULL,
-    password VARCHAR(200) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     UNIQUE(name)
 );
 

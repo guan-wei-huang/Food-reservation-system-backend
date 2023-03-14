@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"log"
 	"net/http"
 	o "reserve_restaurant/order"
@@ -38,7 +37,7 @@ func (handler *Handler) NewUser(c *gin.Context) {
 	ctx := context.Background()
 
 	user := u.User{}
-	if err := c.ShouldBind(&user); err != nil {
+	if err := c.ShouldBindJSON(&user); err != nil {
 		log.Printf("bind json err: %v", err)
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -54,7 +53,7 @@ func (handler *Handler) NewUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusOK, gin.H{
 		"user_id": id,
 	})
 }
@@ -72,12 +71,11 @@ func (handler *Handler) UserLogin(c *gin.Context) {
 	ctx := context.Background()
 
 	user := u.User{}
-	if err := c.ShouldBind(&user); err != nil {
+	if err := c.ShouldBindJSON(&user); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
-	log.Println("password", user.Password)
 	token, refreshToken, err := handler.service.UserLogin(ctx, user.Name, user.Password)
 	if err != nil {
 		if errors.Is(err, u.ErrInternalServer) {
@@ -127,7 +125,7 @@ func (handler *Handler) GetRestaurantMenu(c *gin.Context) {
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusOK, gin.H{
 		"menu": string(menuJson),
 	})
 }
@@ -159,7 +157,7 @@ func (handler *Handler) GetNearbyRestaurant(c *gin.Context) {
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusOK, gin.H{
 		"location":    location,
 		"restaurants": string(restaurantsJson),
 	})
@@ -187,7 +185,7 @@ func (handler *Handler) CreateFood(c *gin.Context) {
 	}
 	food.Rid = rid
 
-	if err := c.ShouldBind(food); err != nil {
+	if err := c.ShouldBindJSON(food); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
@@ -220,7 +218,7 @@ func (handler *Handler) CreateRestaurant(c *gin.Context) {
 	ctx := context.Background()
 
 	restaurant := &r.Restaurant{}
-	if err := c.ShouldBind(restaurant); err != nil {
+	if err := c.ShouldBindJSON(restaurant); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
 
@@ -246,29 +244,17 @@ func (handler *Handler) CreateRestaurant(c *gin.Context) {
 // @Router /order [POST]
 func (handler *Handler) CreateOrder(c *gin.Context) {
 	ctx := context.Background()
-	uids := c.GetString("userId")
-	uid, _ := strconv.Atoi(uids)
+	uid := getUserId(c)
 
 	order := &o.Order{
 		Uid:       uid,
 		CreatedAt: time.Now(),
 	}
 
-	body, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
+	if err := c.ShouldBindJSON(&order); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
-
-	if err = json.Unmarshal(body, &order); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	// if err := c.BindJSON(order); err != nil {
-	// 	c.AbortWithError(http.StatusBadRequest, err)
-	// 	return
-	// }
 
 	oid, err := handler.service.CreateOrder(ctx, order)
 	if err != nil {
@@ -280,7 +266,7 @@ func (handler *Handler) CreateOrder(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusOK, gin.H{
 		"order_id": oid,
 	})
 }
@@ -295,8 +281,7 @@ func (handler *Handler) CreateOrder(c *gin.Context) {
 // @Router /order/{oid} [GET]
 func (handler *Handler) GetOrder(c *gin.Context) {
 	ctx := context.Background()
-	uids := c.GetString("userId")
-	uid, _ := strconv.Atoi(uids)
+	uid := getUserId(c)
 
 	oid, err := strconv.Atoi(c.Param("oid"))
 	if err != nil {
@@ -320,7 +305,7 @@ func (handler *Handler) GetOrder(c *gin.Context) {
 	}
 
 	//orderJson, _ := json.MarshalIndent(order, "", " ")
-	c.JSON(http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusOK, gin.H{
 		"order": order,
 	})
 }
@@ -334,8 +319,7 @@ func (handler *Handler) GetOrder(c *gin.Context) {
 // @Router /order [GET]
 func (handler *Handler) GetOrderForUser(c *gin.Context) {
 	ctx := context.Background()
-	uids := c.GetString("userId")
-	uid, _ := strconv.Atoi(uids)
+	uid := getUserId(c)
 
 	orders, err := handler.service.GetOrderForUser(ctx, uid)
 	if err != nil {
@@ -348,7 +332,7 @@ func (handler *Handler) GetOrderForUser(c *gin.Context) {
 	}
 
 	//ordersJson, _ := json.MarshalIndent(orders, "", " ")
-	c.JSON(http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusOK, gin.H{
 		"order": orders,
 	})
 }

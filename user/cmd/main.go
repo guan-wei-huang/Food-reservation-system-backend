@@ -7,13 +7,8 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
-type Config struct {
-	DatabaseDsn string `envconfig:"DATABASE_DSN"`
-	Port        int    `envconfig:"PORT"`
-}
-
 func main() {
-	var config Config
+	var config user.Config
 	err := envconfig.Process("", &config)
 	if err != nil {
 		log.Fatal("parse env file error: ", err)
@@ -32,5 +27,5 @@ func main() {
 
 	s := user.NewService(repo)
 	log.Printf("Listening on port %v...", config.Port)
-	log.Fatal(user.ListenGRPC(s, config.Port))
+	log.Fatal(user.ListenGRPC(s, &config))
 }

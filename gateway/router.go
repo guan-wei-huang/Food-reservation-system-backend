@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
 func (handler *Handler) Register(r *gin.Engine, port string) {
@@ -22,7 +22,7 @@ func (handler *Handler) Register(r *gin.Engine, port string) {
 	r.GET("/search/:location", handler.GetNearbyRestaurant)
 
 	orderGroup := r.Group("/order")
-	orderGroup.Use(Auth())
+	orderGroup.Use(Auth)
 	{
 		orderGroup.GET("/:oid", handler.GetOrder)
 		orderGroup.GET("/", handler.GetOrderForUser)
@@ -31,7 +31,7 @@ func (handler *Handler) Register(r *gin.Engine, port string) {
 
 	if mode := gin.Mode(); mode == gin.DebugMode {
 		url := ginSwagger.URL(fmt.Sprintf("http://localhost:%v/swagger/doc.json", port))
-		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
+		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, url))
 
 		handler := promhttp.Handler()
 		r.GET("/metrics", func(c *gin.Context) {

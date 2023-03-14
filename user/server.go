@@ -16,15 +16,17 @@ type grpcServer struct {
 	service Service
 }
 
-func ListenGRPC(s Service, port int) error {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+func ListenGRPC(s Service, config *Config) error {
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
 	if err != nil {
 		return err
 	}
 
-	logger, _ := zap.NewProduction()
-	defer logger.Sync()
+	zapConfig := zap.NewProductionConfig()
+	zapConfig.OutputPaths = []string{config.LogFile}
+	logger, _ := zapConfig.Build()
 	sugar := logger.Sugar()
+	defer sugar.Sync() // make sure buffer clean
 
 	serv := grpc.NewServer()
 	pb.RegisterUserServiceServer(serv, &grpcServer{sugar, s})

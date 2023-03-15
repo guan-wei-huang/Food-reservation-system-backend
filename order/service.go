@@ -12,18 +12,18 @@ var (
 )
 
 type Product struct {
-	Fid      int     `json:"fid" form:"fid"`
-	Name     string  `json:"name" form:"name"`
-	Price    float32 `json:"price" form:"price"`
-	Quantity int     `json:"quantity" form:"quantity"`
+	Fid      int     `json:"fid"`
+	Name     string  `json:"name"`
+	Price    float32 `json:"price"`
+	Quantity int     `json:"quantity"`
 }
 
 type Order struct {
-	Id        int       `json:"id" form:"id"`
-	Rid       int       `json:"rid" form:"rid"`
-	Uid       int       `json:"uid" form:"uid"`
-	Products  []Product `json:"products" form:"products"`
-	CreatedAt time.Time `json:"created_at" form:"created_at"`
+	Id        int       `json:"id"`
+	Rid       int       `json:"rid"`
+	Uid       int       `json:"uid"`
+	Products  []Product `json:"products"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Service interface {

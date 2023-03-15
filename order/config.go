@@ -1,8 +1,7 @@
-package user
+package order
 
 import (
 	"log"
-	"os"
 	"sync"
 
 	"github.com/kelseyhightower/envconfig"
@@ -11,7 +10,6 @@ import (
 type Config struct {
 	DatabaseDsn string `envconfig:"DATABASE_DSN"`
 	Port        int    `envconfig:"PORT"`
-	LogFile     string `envconfig:"LOG_FILE"`
 }
 
 var config Config
@@ -23,11 +21,6 @@ func GetConfig() *Config {
 		if err != nil {
 			log.Fatal("parse env file error: ", err)
 			return
-		}
-		if _, err := os.Stat(config.LogFile); !os.IsExist(err) {
-			if _, err := os.Create(config.LogFile); err != nil {
-				log.Fatal("create log file error: ", err)
-			}
 		}
 	})
 	return &config

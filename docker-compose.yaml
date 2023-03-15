@@ -42,7 +42,7 @@ services:
     depends_on: 
       - restaurant_db
     environment:
-      #"postgresql://%s:%s@%s:%d/%s?sslmode=disable", ds.DBUser, ds.DBPass, ds.Host, ds.Port, ds.DBName) 
+      # postgresql://%s:%s@%s:%d/%s?sslmode=disable", ds.DBUser, ds.DBPass, ds.Host, ds.Port, ds.DBName) 
       DATABASE_DSN: postgres://apple:123456@restaurant_db/restaurant_db?sslmode=disable
       PORT: 3001
     ports:
@@ -60,6 +60,7 @@ services:
     environment: 
       DATABASE_DSN: postgres://apple:123456@user_db/user_db?sslmode=disable
       PORT: 3002
+      LOG_FILE: ./user/temp.txt
     ports: 
       - 3002:3002
     networks:
@@ -76,6 +77,9 @@ services:
       POSTGRES_PASSWORD: 123456
     networks:
       - restaurant_service
+    user: root
+    volumes:
+      - ./order/sqldata:/var/lib/postgresql/data
     restart: always
 
   restaurant_db:
@@ -88,6 +92,9 @@ services:
       POSTGRES_PASSWORD: 123456 
     networks:
       - restaurant_service
+    user: root
+    volumes:
+      - ./restaurant/sqldata:/var/lib/postgresql/data
     restart: always
 
   user_db:
@@ -100,6 +107,9 @@ services:
       POSTGRES_PASSWORD: 123456
     networks:
       - restaurant_service
+    user: root
+    volumes:
+      - ./user/sqldata:/var/lib/postgresql/data
     restart: always
 
   adminer:

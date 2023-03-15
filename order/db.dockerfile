@@ -1,2 +1,2 @@
-FROM postgres:13.4-alpine
-ADD . /docker-entrypoint-initdb.d
+FROM postgres:15-alpine
+ADD init.sql /docker-entrypoint-initdb.d

@@ -11,9 +11,9 @@ import (
 )
 
 type User struct {
-	ID       int    `json:"id,omitempty" form:"id"`
-	Name     string `json:"name" form:"name"`
-	Password string `json:"password" form:"password"`
+	ID       int    `json:"id,omitempty"`
+	Name     string `json:"name"`
+	Password string `json:"password"`
 }
 
 type Service interface {

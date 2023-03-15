@@ -3,17 +3,10 @@ package main
 import (
 	"log"
 	"reserve_restaurant/user"
-
-	"github.com/kelseyhightower/envconfig"
 )
 
 func main() {
-	var config user.Config
-	err := envconfig.Process("", &config)
-	if err != nil {
-		log.Fatal("parse env file error: ", err)
-		return
-	}
+	config := user.GetConfig()
 
 	// config.DatabaseDsn = "postgres://apple:123456@localhost:8890/apple?sslmode=disable"
 	// config.Port = 3002
@@ -27,5 +20,5 @@ func main() {
 
 	s := user.NewService(repo)
 	log.Printf("Listening on port %v...", config.Port)
-	log.Fatal(user.ListenGRPC(s, &config))
+	log.Fatal(user.ListenGRPC(s, config))
 }

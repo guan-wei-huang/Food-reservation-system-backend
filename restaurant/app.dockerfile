@@ -1,4 +1,4 @@
-FROM golang:1.17-alpine
+FROM golang:1.19-alpine
 WORKDIR /go/src/github.com/guan-wei-huang/reserve-restaurant
 COPY go.mod go.sum ./
 COPY wait-for-it.sh ./

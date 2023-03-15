@@ -5,30 +5,30 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
 type Restaurant struct {
-	ID          int     `json:"id" form:"id"`
-	Name        string  `json:"name" form:"name"`
-	Description string  `json:"description" form:"description"`
-	Location    string  `json:"location" form:"location"`
-	Latitude    float64 `json:"latitude" form:"latitude"`
-	Longitude   float64 `json:"longitude" form:"longtitude"`
+	ID          int     `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Location    string  `json:"location"`
+	Latitude    float64 `json:"latitude"`
+	Longitude   float64 `json:"longitude"`
 }
 
 type Menu struct {
-	Rid   int `json:"rid"`
-	Foods []Food
+	Rid   int    `json:"rid"`
+	Foods []Food `json:"foods"`
 }
 
 type Food struct {
-	Fid         int     `json:"fid" form:"fid"`
-	Rid         int     `json:"rid" form:"rid"`
-	Name        string  `json:"name" form:"name"`
-	Description string  `json:"description" form:"description"`
-	Price       float32 `json:"price" form:"price"`
+	Fid         int     `json:"fid"`
+	Rid         int     `json:"rid"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Price       float32 `json:"price"`
 }
 
 type Service interface {
@@ -82,14 +82,15 @@ func (s *restaurantService) CreateFood(ctx context.Context, f *Food) error {
 
 func (s *restaurantService) SearchRestaurant(ctx context.Context, location string) ([]*Restaurant, error) {
 	// use api to translate location to latitude and longitude
-	mapUrl := fmt.Sprintf("https://maps.googleapis.com/maps/api/geocode/json?address=%v&key=%v", location, GOOGLE_API_KEY)
+	mapUrl := fmt.Sprintf("https://maps.googleapis.com/maps/api/geocode/json?address=%v&key=%v",
+		location, GetConfig().ApiKey)
 	resp, err := http.Get(mapUrl)
 	if err != nil {
 		return nil, fmt.Errorf("google api visit err: %v", err)
 	}
 	defer resp.Body.Close()
 
-	response, err := ioutil.ReadAll(resp.Body)
+	response, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	o "reserve_restaurant/order"
 	r "reserve_restaurant/restaurant"
@@ -38,17 +37,20 @@ func (handler *Handler) NewUser(c *gin.Context) {
 
 	user := u.User{}
 	if err := c.ShouldBindJSON(&user); err != nil {
-		log.Printf("bind json err: %v", err)
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": err.Error(),
+		})
 		return
 	}
 
 	id, err := handler.service.NewUser(ctx, user.Name, user.Password)
 	if err != nil {
 		if errors.Is(err, u.ErrInternalServer) {
-			c.AbortWithStatus(http.StatusInternalServerError)
+			c.JSON(http.StatusInternalServerError, nil)
 		} else {
-			c.AbortWithError(http.StatusBadRequest, err)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
+			})
 		}
 		return
 	}
@@ -72,16 +74,20 @@ func (handler *Handler) UserLogin(c *gin.Context) {
 
 	user := u.User{}
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": err.Error(),
+		})
 		return
 	}
 
 	token, refreshToken, err := handler.service.UserLogin(ctx, user.Name, user.Password)
 	if err != nil {
 		if errors.Is(err, u.ErrInternalServer) {
-			c.AbortWithStatus(http.StatusInternalServerError)
+			c.JSON(http.StatusInternalServerError, nil)
 		} else {
-			c.AbortWithError(http.StatusBadRequest, err)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
+			})
 		}
 		return
 	}
@@ -106,23 +112,27 @@ func (handler *Handler) GetRestaurantMenu(c *gin.Context) {
 
 	rid, err := strconv.Atoi(c.Param("rid"))
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": err.Error(),
+		})
 		return
 	}
 
 	menu, err := handler.service.GetRestaurantMenu(ctx, rid)
 	if err != nil {
 		if errors.Is(err, r.ErrInternalServer) {
-			c.AbortWithStatus(http.StatusInternalServerError)
+			c.JSON(http.StatusInternalServerError, nil)
 		} else {
-			c.AbortWithError(http.StatusBadRequest, err)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
+			})
 		}
 		return
 	}
 
 	menuJson, err := json.MarshalIndent(menu, "", " ")
 	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, nil)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -145,16 +155,18 @@ func (handler *Handler) GetNearbyRestaurant(c *gin.Context) {
 	restaurants, err := handler.service.SearchRestaurant(ctx, location)
 	if err != nil {
 		if errors.Is(err, r.ErrInternalServer) {
-			c.AbortWithStatus(http.StatusInternalServerError)
+			c.JSON(http.StatusInternalServerError, nil)
 		} else {
-			c.AbortWithError(http.StatusBadRequest, err)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
+			})
 		}
 		return
 	}
 
 	restaurantsJson, err := json.MarshalIndent(restaurants, "", " ")
 	if err != nil {
-		c.AbortWithStatus(http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, nil)
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -180,21 +192,27 @@ func (handler *Handler) CreateFood(c *gin.Context) {
 	food := &r.Food{}
 	rid, err := strconv.Atoi(c.Param("rid"))
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": err.Error(),
+		})
 		return
 	}
 	food.Rid = rid
 
 	if err := c.ShouldBindJSON(food); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": err.Error(),
+		})
 		return
 	}
 
 	if err := handler.service.CreateFood(ctx, food); err != nil {
 		if errors.Is(err, r.ErrInternalServer) {
-			c.AbortWithStatus(http.StatusInternalServerError)
+			c.JSON(http.StatusInternalServerError, nil)
 		} else {
-			c.AbortWithError(http.StatusBadRequest, err)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
+			})
 		}
 		return
 	}
@@ -219,14 +237,18 @@ func (handler *Handler) CreateRestaurant(c *gin.Context) {
 
 	restaurant := &r.Restaurant{}
 	if err := c.ShouldBindJSON(restaurant); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": err.Error(),
+		})
 	}
 
 	if err := handler.service.CreateRestaurant(ctx, restaurant); err != nil {
 		if errors.Is(err, r.ErrInternalServer) {
-			c.AbortWithStatus(http.StatusInternalServerError)
+			c.JSON(http.StatusInternalServerError, nil)
 		} else {
-			c.AbortWithError(http.StatusBadRequest, err)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
+			})
 		}
 		return
 	}
@@ -252,16 +274,20 @@ func (handler *Handler) CreateOrder(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&order); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": err.Error(),
+		})
 		return
 	}
 
 	oid, err := handler.service.CreateOrder(ctx, order)
 	if err != nil {
 		if errors.Is(err, o.ErrInternalServer) {
-			c.AbortWithStatus(http.StatusInternalServerError)
+			c.JSON(http.StatusInternalServerError, nil)
 		} else {
-			c.AbortWithError(http.StatusBadRequest, err)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
+			})
 		}
 		return
 	}
@@ -285,22 +311,26 @@ func (handler *Handler) GetOrder(c *gin.Context) {
 
 	oid, err := strconv.Atoi(c.Param("oid"))
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": err.Error(),
+		})
 		return
 	}
 
 	order, err := handler.service.GetOrder(ctx, oid, uid)
 	if err != nil {
 		if errors.Is(err, o.ErrInternalServer) {
-			c.AbortWithStatus(http.StatusInternalServerError)
+			c.JSON(http.StatusInternalServerError, nil)
 		} else {
-			c.AbortWithError(http.StatusBadRequest, err)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
+			})
 		}
 		return
 	}
 
 	if order.Uid != uid {
-		c.AbortWithStatus(http.StatusUnauthorized)
+		c.JSON(http.StatusUnauthorized, nil)
 		return
 	}
 
@@ -324,9 +354,11 @@ func (handler *Handler) GetOrderForUser(c *gin.Context) {
 	orders, err := handler.service.GetOrderForUser(ctx, uid)
 	if err != nil {
 		if errors.Is(err, o.ErrInternalServer) {
-			c.AbortWithStatus(http.StatusInternalServerError)
+			c.JSON(http.StatusInternalServerError, nil)
 		} else {
-			c.AbortWithError(http.StatusBadRequest, err)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": err.Error(),
+			})
 		}
 		return
 	}

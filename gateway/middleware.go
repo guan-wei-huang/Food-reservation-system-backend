@@ -8,7 +8,7 @@ import (
 )
 
 func Auth(c *gin.Context) {
-	token := c.Request.Header.Get("access_token")
+	token := c.Request.Header.Get("Authorization")
 	// refreshToken := c.Request.Header.Get("refresh_token")
 
 	tokenClaims, err := jwt.ParseWithClaims(token, &jwt.MapClaims{}, func(t *jwt.Token) (interface{}, error) {

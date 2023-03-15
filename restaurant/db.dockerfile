@@ -1,2 +1,2 @@
 FROM gangstead/postgis:13-arm
-ADD . /docker-entrypoint-initdb.d
+ADD init.sql /docker-entrypoint-initdb.d

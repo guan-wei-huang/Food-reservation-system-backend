@@ -20,8 +20,8 @@ type grpcServer struct {
 	service Service
 }
 
-func ListenGRPC(s Service, port int) error {
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+func ListenGRPC(s Service, config *Config) error {
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
 	if err != nil {
 		return err
 	}

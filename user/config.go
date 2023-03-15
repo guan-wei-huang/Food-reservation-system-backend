@@ -24,7 +24,7 @@ func GetConfig() *Config {
 			log.Fatal("parse env file error: ", err)
 			return
 		}
-		if _, err := os.Stat(config.LogFile); !os.IsExist(err) {
+		if _, err = os.Stat(config.LogFile); os.IsNotExist(err) {
 			if _, err := os.Create(config.LogFile); err != nil {
 				log.Fatal("create log file error: ", err)
 			}
